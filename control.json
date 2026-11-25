@@ -1,7 +1,11 @@
 {
  "v": 1,
- "id": 1795623831771,
- "cmd": "CLOSE_SELL",
- "ts": 1795623831,
- "by": "app"
+ "id": 1795628152471,
+ "cmd": "START",
+ "ts": 1795628152,
+ "by": "app",
+ "win": 30,
+ "maxTP": 1,
+ "verdict": "RED",
+ "score": 94
 }
