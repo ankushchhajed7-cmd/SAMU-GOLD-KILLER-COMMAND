@@ -192,7 +192,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(246,220,143,.5))}
   <div class="wrap hd">
     <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".45" stop-color="#d9b45a"/><stop offset="1" stop-color="#7a5a20"/></linearGradient></defs><circle cx="32" cy="32" r="29" fill="none" stroke="url(#mg)" stroke-width="3"/><circle cx="32" cy="32" r="21" fill="url(#mg)"/><path d="M22 36l7-10 6 7 7-9" fill="none" stroke="#1c1205" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <div class="brand"><b>SAMU GOLD KILLER</b><small>COMMAND</small></div>
-    <span class="ver" id="ver">v1.1.0</span>
+    <span class="ver" id="ver">v1.1.1</span>
     <button class="ref" id="refresh" aria-label="Refresh: naya version laao">⟳</button>
   </div>
 </header>
@@ -559,7 +559,7 @@ if (typeof module !== 'undefined') module.exports = SGK;
 <script>
 (function () {
 'use strict';
-var APP_VERSION = '1.1.0';
+var APP_VERSION = '1.1.1';
 var $ = function (id) { return document.getElementById(id); };
 var L = SGK;
 document.getElementById('ver').textContent = 'v' + APP_VERSION;
@@ -718,13 +718,26 @@ function ghRead(path) {
     return r.text().then(function (t) { try { return JSON.parse(t); } catch (e) { return null; } });
   });
 }
-function ghWrite(path, obj, msg) {
-  if (!token) return Promise.reject(new Error('Token band hai — PIN se kholo'));
-  return fetch(url(path) + '&_=' + Date.now(), { headers: hdr(false), cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (cur) {
+function safeJson(r) { return r.text().then(function (t) { try { return t ? JSON.parse(t) : {}; } catch (e) { return {}; } }); }
+function ghWriteOnce(path, obj, msg) {
+  return fetch(url(path) + '&_=' + Date.now(), { headers: hdr(false), cache: 'no-store' }).then(function (r) { return r.ok ? safeJson(r) : null; }).then(function (cur) {
     var body = { message: msg, content: L.b64(JSON.stringify(obj, null, 1)), branch: cfg.branch };
     if (cur && cur.sha) body.sha = cur.sha;
     return fetch('https://api.github.com/repos/' + cfg.repo + '/contents/' + path, { method: 'PUT', headers: Object.assign(hdr(false), { 'Content-Type': 'application/json' }), body: JSON.stringify(body) });
-  }).then(function (r) { if (!r.ok) return r.json().then(function (j) { throw new Error(j.message || ('GitHub ' + r.status)); }); return r.json(); });
+  }).then(function (r) {
+    return safeJson(r).then(function (j) {
+      if (r.ok) return j;
+      var e = new Error(r.status === 401 ? 'Token galat ya expire' : r.status === 403 ? 'Token ki ijazat nahi' : (j.message || ('GitHub ' + r.status + ' (thodi der me dobara)')));
+      e.retry = r.status >= 500 || r.status === 409 || r.status === 422; throw e;
+    });
+  });
+}
+// GitHub kabhi-kabhi 502 / takrav deta hai -> khud 2 baar dobara (sha naya lekar)
+function ghWrite(path, obj, msg) {
+  if (!token) return Promise.reject(new Error('Token band hai — PIN se kholo'));
+  var n = 0;
+  function go() { return ghWriteOnce(path, obj, msg).catch(function (e) { if ((e.retry || e instanceof TypeError) && n++ < 2) return new Promise(function (ok) { setTimeout(ok, 1500 * n); }).then(go); throw e; }); }
+  return go();
 }
 
 // ---------- commands ----------
