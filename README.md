@@ -1,6 +1,6 @@
 # SAMU GOLD KILLER · COMMAND
 
-Phone se gold market jaancho, phir VPS par **SAMU GOLD KILLER v1.05** EA ko START karo.
+Phone se gold market jaancho, phir VPS par **SAMU GOLD KILLER v1.06** EA ko START karo.
 
 App: https://ankushchhajed7-cmd.github.io/SAMU-GOLD-KILLER-COMMAND/ (demo: `?demo=1`)
 

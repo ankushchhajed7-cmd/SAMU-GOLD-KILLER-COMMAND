@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                   SAMU GOLD KILLER v1.05.mq5       |
+//|                                   SAMU GOLD KILLER v1.06.mq5       |
 //|                                   Ankush New Vision                |
 //|                                                                    |
 //|  "GOLD KILLER V10" (MT4, InstaForex 72929366, magic 666888) ka     |
@@ -35,6 +35,14 @@
 //|  XAUUSDm (3 digit) / XAUUSD (2 digit) dono par same chalega.       |
 //|                                                                    |
 //|  CHANGELOG                                                         |
+//|  v1.06 (25-Nov-2026) TOKEN PASTE KI ZAROORAT NAHI:                 |
+//|   - GitHubToken khaali chhodo. Dashboard par JODO CODE dikhta hai  |
+//|     (jaise K7M-3QX-9PA). App > Settings > "EA jodo" me code likho. |
+//|     App token ko is code se lock karke live/pair.json me bhejta    |
+//|     hai; EA har 30 sec dekhta hai, khol ke VPS par save karta hai  |
+//|     (MQL5\Files Common, SGK_tok_<magic>.txt) aur pair.json mitata. |
+//|   - Token galat / expire (401) -> file mit ke naya code.           |
+//|   - Token input me daala ho to wahi chalega (purana tareeka).      |
 //|  v1.05 (25-Nov-2026) APP CONTROL (repo SAMU-GOLD-KILLER-COMMAND):  |
 //|   - ControlMode APP: nayi basket sirf START ke baad. START app se  |
 //|     (GitHub live branch control.json) ya chart ke START button se. |
@@ -82,7 +90,7 @@
 //|  v1.00 (18-Nov-2026) Pehla build.                                  |
 //+------------------------------------------------------------------+
 #property copyright "Ankush New Vision"
-#property version   "1.05"
+#property version   "1.06"
 
 #include <Trade\Trade.mqh>
 
@@ -133,7 +141,7 @@ enum ENUM_SGK_CTRL
 
 input group "=== App Control (v1.05) ==="
 input ENUM_SGK_CTRL ControlMode = CTRL_APP;      // Nayi basket kab
-input string GitHubToken        = "";            // GitHub token (sirf is repo, Contents read+write)
+input string GitHubToken        = "";            // KHAALI CHHODO - app ke "EA jodo" code se token khud aata hai
 input string GitHubRepo         = "ankushchhajed7-cmd/SAMU-GOLD-KILLER-COMMAND"; // Repo
 input string GitHubBranch       = "live";        // Live branch (control.json / status.json)
 input int    PollSec            = 15;            // Kitne sec me command dekho
@@ -206,6 +214,11 @@ long     linkAt      = 0;
 bool     calmOk      = true;
 double   calmRange   = 0;
 string   gvArm;
+//--- v1.06 jodo code
+string   ghTok       = "";
+bool     tokFromFile = false;
+string   pairCode    = "", pairShow = "", pairId = "";
+long     lastPair    = 0;
 
 //--- today stats cache
 double   todayPL     = 0;
@@ -228,6 +241,7 @@ int OnInit()
    paused = GlobalVariableCheck(gvPause) && GlobalVariableGet(gvPause) > 0.5;
    gvArm  = "SGK5_" + IntegerToString(MagicNumber) + "_" + _Symbol + "_";
    LoadArm();                                             // v1.05
+   InitToken();                                           // v1.06
    if(RemoteOn()) linkText = "Jud raha hai...";
    Comment("");
    SetupChart();
@@ -1019,7 +1033,7 @@ void Panel()
    int rx = W - m;
    Lbl("clk", rx, y + PX(0.6), StringFormat("%02d:%02d", it.hour, it.min), F_SERIF, FS(4.4), C_CREAM, 1);
    Lbl("day", rx, y + PX(6.4), Spaced("IST · " + days[it.day_of_week] + " " + IntegerToString(it.day) + " " + mons[it.mon - 1]), F_B, FS(1.5), C_GOLD, 1);
-   Lbl("srv", rx, y + PX(8.6), "Server " + TimeToString(TimeTradeServer(), TIME_MINUTES) + "  ·  v1.05", F_B, FS(1.5), C_MUTED, 1);
+   Lbl("srv", rx, y + PX(8.6), "Server " + TimeToString(TimeTradeServer(), TIME_MINUTES) + "  ·  v1.06", F_B, FS(1.5), C_MUTED, 1);
    y += PX(11.6);
    Rect("hr1", m, y, CW, 1, C_LINE, C_LINE);
    y += PX(1.0);
@@ -1156,7 +1170,7 @@ void Panel()
    kL[5] = ControlMode == CTRL_APP ? "START" : "Trade time";
    kV[5] = (nightOff && UseTradeTime && ControlMode == CTRL_FIXED) ? timeText + " · raat OFF" : timeText; kC[5] = inTime ? C_GREEN : C_AMBER;   // v1.04/1.05
    kL[6] = "Shaant check"; kV[6] = CalmRangeUSD > 0 ? StringFormat("%d min $%.1f / $%.1f %s", CalmMinutes, calmRange, CalmRangeUSD, calmOk ? "OK" : "RUKA") : "Off"; kC[6] = calmOk ? C_GREEN : C_AMBER;
-   kL[7] = "App link";   kV[7] = linkText; kC[7] = RemoteOn() ? (linkOk ? C_GREEN : C_RED) : C_MUTED;
+   kL[7] = "App link";   kV[7] = linkText; kC[7] = RemoteOn() ? (linkOk ? C_GREEN : C_RED) : (ghTok == "" ? C_AMBER : C_MUTED);
    kL[8] = "Agli news";  kV[8] = newsText; kC[8] = C_MUTED;
    double kh = 2.75;
    int kRows = (int)MathFloor((lowBot - (ry0 + PX(2.9)) - PX(0.3)) / (kh * gU));
@@ -1207,6 +1221,8 @@ void Banner(SideInfo &b, SideInfo &s, string &t, string &m, int &k)
                                    { t = "EMERGENCY"; m = StringFormat("Max levels full  ·  BUY %d / SELL %d of %d", b.count, s.count, MaxLevels); k = 2; }
    else if(UseDeepBounce && DeepFromLevel > 0 && (b.count >= DeepFromLevel || s.count >= DeepFromLevel))
                                    { t = "DEEP"; m = StringFormat("Basket gehri  ·  BUY L%d / SELL L%d  ·  bounce %.2f lot  ·  $%.0f profit par band", b.count, s.count, DeepLot, DeepTP_USD); k = 2; }
+   else if(ghTok == "" && !MQLInfoInteger(MQL_TESTER))
+                                   { t = "JODO CODE"; m = pairShow + "   ·   App > Settings > EA jodo me ye code likho"; k = 1; }
    else if(RemoteOn() && !linkOk && lastPoll > 0)
                                    { t = "APP LINK"; m = linkText; k = 1; }
    else if(paused)                 { t = "PAUSED"; m = "Naya pending band  ·  $" + DoubleToString(BasketTP_USD, 0) + " TP chalu  ·  RESUME dabao"; k = 1; }
@@ -1233,7 +1249,7 @@ void Banner(SideInfo &b, SideInfo &s, string &t, string &m, int &k)
 //+------------------------------------------------------------------+
 //| v1.05 START / STOP state (restart ke baad bhi yaad)               |
 //+------------------------------------------------------------------+
-bool RemoteOn() { return StringLen(GitHubToken) > 10 && !MQLInfoInteger(MQL_TESTER); }
+bool RemoteOn() { return StringLen(ghTok) > 10 && !MQLInfoInteger(MQL_TESTER); }
 
 bool WindowOpen()
 {
@@ -1312,7 +1328,7 @@ string GhUrl(string path, bool withRef)
 
 int GhReq(string method, string url, string accept, string body, string &resp)
 {
-   string hd = "Authorization: Bearer " + GitHubToken + "\r\nAccept: " + accept + "\r\nUser-Agent: SAMU-GOLD-KILLER-EA\r\nX-GitHub-Api-Version: 2022-11-28\r\n";
+   string hd = (ghTok != "" ? "Authorization: Bearer " + ghTok + "\r\n" : "") + "Accept: " + accept + "\r\nUser-Agent: SAMU-GOLD-KILLER-EA\r\nX-GitHub-Api-Version: 2022-11-28\r\n";
    if(body != "") hd += "Content-Type: application/json\r\n";
    char data[], res[]; string rh;
    if(body != "") { int n = StringToCharArray(body, data, 0, WHOLE_ARRAY, CP_UTF8); ArrayResize(data, MathMax(0, n - 1)); }
@@ -1391,8 +1407,14 @@ string Base64(string s)
 
 void Remote()
 {
-   if(!RemoteOn()) { linkOk = false; linkText = MQLInfoInteger(MQL_TESTER) ? "Tester (off)" : "Off (token nahi)"; return; }
+   if(MQLInfoInteger(MQL_TESTER)) { linkOk = false; linkText = "Tester (off)"; return; }
    long now = (long)TimeGMT();
+   if(ghTok == "")                                       // v1.06: app se jodne ka intezaar
+   {
+      linkOk = false; linkText = "Jodo code " + pairShow;
+      if(now - lastPair >= 30) { lastPair = now; PollPair(); }
+      return;
+   }
    if(now - lastPoll >= MathMax(5, PollSec)) { lastPoll = now; PollControl(); }
    if(pushNow || now - lastPush >= MathMax(10, StatusSec)) { lastPush = now; pushNow = false; PushStatus(); }
 }
@@ -1403,6 +1425,7 @@ void PollControl()
    int c = GhReq("GET", GhUrl("control.json", true), "application/vnd.github.raw+json", "", r);
    if(c == -1) return;
    if(c == 404) { linkOk = true; linkAt = (long)TimeGMT(); linkText = "OK · abhi koi command nahi"; return; }
+   if(c == 401 && tokFromFile) { ResetToken("token galat / expire"); return; }   // v1.06
    if(c != 200) { linkOk = false; linkText = LinkErr(c); return; }
    linkOk = true; linkAt = (long)TimeGMT(); linkText = "OK · " + TimeToString((datetime)(linkAt + 19800), TIME_SECONDS);
    HandleCmd(r);
@@ -1460,6 +1483,7 @@ void PushStatus()
    string body = "{\"message\":\"ea status\",\"branch\":\"" + GitHubBranch + "\",\"content\":\"" + b64 + "\"" + (statusSha != "" ? ",\"sha\":\"" + statusSha + "\"" : "") + "}";
    int c = GhReq("PUT", GhUrl("status.json", false), "application/vnd.github+json", body, r);
    if(c == 200 || c == 201) { statusSha = JStr(r, "sha"); linkOk = true; linkAt = (long)TimeGMT(); }
+   else if(c == 401 && tokFromFile) ResetToken("token galat / expire");   // v1.06
    else { statusSha = ""; if(c != -1) { linkOk = false; linkText = LinkErr(c); } if(c == 409 || c == 422) pushNow = true; }
 }
 
@@ -1486,7 +1510,7 @@ string BuildStatus()
    double bid = SymbolInfoDouble(_Symbol, SYMBOL_BID), ask = SymbolInfoDouble(_Symbol, SYMBOL_ASK);
    double flt = b.profit + s.profit;
 
-   string j = "{\"v\":1,\"ea\":\"1.05\",\"t\":" + IntegerToString(now);
+   string j = "{\"v\":1,\"ea\":\"1.06\",\"t\":" + IntegerToString(now);
    j += ",\"acc\":\"" + acc + "\",\"srv\":\"" + JEsc(AccountInfoString(ACCOUNT_SERVER)) + "\",\"sym\":\"" + _Symbol + "\"";
    j += ",\"bid\":" + JD(bid, _Digits) + ",\"ask\":" + JD(ask, _Digits) + ",\"sp\":" + JD(ask - bid);
    j += ",\"bal\":" + JD(AccountInfoDouble(ACCOUNT_BALANCE)) + ",\"eq\":" + JD(AccountInfoDouble(ACCOUNT_EQUITY)) + ",\"fl\":" + JD(flt) + ",\"tp\":" + JD(BasketTP_USD);
@@ -1541,5 +1565,175 @@ string BuildStatus()
       j += (i ? "," : "") + "[" + IntegerToString((long)rt[i].time - off) + "," + JD(rt[i].open) + "," + JD(rt[i].high) + "," + JD(rt[i].low) + "," + JD(rt[i].close) + "]";
    j += "]}";
    return j;
+}
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+//| v1.06 JODO CODE: token bina paste kiye app se                     |
+//| KDF (app ke saath same): k = SHA256(code + ":" + nonce),          |
+//| phir 5000 baar k = SHA256(k). Block i = SHA256(k + i (4 byte BE)).|
+//| c = "SGK1:" + token XOR blocks.  id = SHA256("SGKID:" + code)[0..8]|
+//+------------------------------------------------------------------+
+#define SGK_ALPHA "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
+
+void Ascii(string s, uchar &a[])
+{
+   int n = StringToCharArray(s, a, 0, WHOLE_ARRAY, CP_UTF8);
+   ArrayResize(a, MathMax(0, n - 1));
+}
+
+bool Sha(const uchar &src[], uchar &dst[])
+{
+   uchar key[];
+   return CryptEncode(CRYPT_HASH_SHA256, src, key, dst) == 32;
+}
+
+string HexOf(const uchar &a[], int n)
+{
+   string s = "";
+   for(int i = 0; i < n && i < ArraySize(a); i++) s += StringFormat("%02x", a[i]);
+   return s;
+}
+
+int HexVal(ushort c)
+{
+   if(c >= '0' && c <= '9') return c - '0';
+   if(c >= 'a' && c <= 'f') return c - 'a' + 10;
+   if(c >= 'A' && c <= 'F') return c - 'A' + 10;
+   return 0;
+}
+
+int Unhex(string h, uchar &out[])
+{
+   int n = StringLen(h) / 2;
+   ArrayResize(out, n);
+   for(int i = 0; i < n; i++) out[i] = (uchar)((HexVal(StringGetCharacter(h, 2 * i)) << 4) | HexVal(StringGetCharacter(h, 2 * i + 1)));
+   return n;
+}
+
+string FileRead1(string name)
+{
+   int h = FileOpen(name, FILE_READ | FILE_TXT | FILE_ANSI | FILE_COMMON);
+   if(h == INVALID_HANDLE) return "";
+   string s = FileReadString(h);
+   FileClose(h);
+   StringTrimLeft(s); StringTrimRight(s);
+   return s;
+}
+
+void FileWrite1(string name, string v)
+{
+   int h = FileOpen(name, FILE_WRITE | FILE_TXT | FILE_ANSI | FILE_COMMON);
+   if(h == INVALID_HANDLE) { Print("SAMU GOLD KILLER: file nahi likh paye ", name); return; }
+   FileWriteString(h, v);
+   FileClose(h);
+}
+
+string TokFile()  { return "SGK_tok_"  + IntegerToString(MagicNumber) + ".txt"; }
+string PairFile() { return "SGK_pair_" + IntegerToString(MagicNumber) + ".txt"; }
+
+void MakePairCode(bool fresh)
+{
+   pairCode = fresh ? "" : FileRead1(PairFile());
+   if(StringLen(pairCode) != 9)
+   {
+      MathSrand((uint)(GetMicrosecondCount() ^ (ulong)TimeLocal()));
+      uchar seed[], h[];
+      Ascii(IntegerToString((long)GetMicrosecondCount()) + ":" + IntegerToString((long)TimeLocal()) + ":" + IntegerToString(AccountInfoInteger(ACCOUNT_LOGIN)) + ":" + IntegerToString(MathRand()) + ":" + IntegerToString(MathRand()) + ":" + TerminalInfoString(TERMINAL_PATH), seed);
+      Sha(seed, h);
+      string al = SGK_ALPHA; int L = StringLen(al);
+      pairCode = "";
+      for(int i = 0; i < 9; i++) pairCode += StringSubstr(al, h[i] % L, 1);
+      FileWrite1(PairFile(), pairCode);
+   }
+   pairShow = StringSubstr(pairCode, 0, 3) + "-" + StringSubstr(pairCode, 3, 3) + "-" + StringSubstr(pairCode, 6, 3);
+   uchar a[], d[];
+   Ascii("SGKID:" + pairCode, a);
+   Sha(a, d);
+   pairId = HexOf(d, 8);
+}
+
+void InitToken()
+{
+   ghTok = GitHubToken; StringTrimLeft(ghTok); StringTrimRight(ghTok);
+   tokFromFile = false;
+   if(StringLen(ghTok) <= 10)
+   {
+      ghTok = MQLInfoInteger(MQL_TESTER) ? "" : FileRead1(TokFile());
+      tokFromFile = StringLen(ghTok) > 10;
+      if(!tokFromFile) ghTok = "";
+   }
+   if(ghTok == "" && !MQLInfoInteger(MQL_TESTER)) MakePairCode(false);
+}
+
+void ResetToken(string why)
+{
+   Print("SAMU GOLD KILLER: token hataya - ", why, ". Naya jodo code.");
+   FileDelete(TokFile(), FILE_COMMON);
+   ghTok = ""; tokFromFile = false; statusSha = ""; linkOk = false;
+   MakePairCode(true);
+   lastPair = 0;
+}
+
+bool PairDecrypt(string code, string nonce, string chex, string &tok)
+{
+   uchar t[], k[];
+   Ascii(code + ":" + nonce, t);
+   if(!Sha(t, k)) return false;
+   for(int i = 0; i < 5000; i++)
+   {
+      uchar x[];
+      ArrayCopy(x, k);
+      if(!Sha(x, k)) return false;
+   }
+   uchar c[];
+   int n = Unhex(chex, c);
+   if(n < 10) return false;
+   uchar p[], blk[];
+   ArrayResize(p, n);
+   int bi = -1;
+   for(int j = 0; j < n; j++)
+   {
+      int b = j / 32;
+      if(b != bi)
+      {
+         uchar ib[];
+         ArrayResize(ib, 36);
+         ArrayCopy(ib, k, 0, 0, 32);
+         ib[32] = (uchar)((b >> 24) & 255); ib[33] = (uchar)((b >> 16) & 255); ib[34] = (uchar)((b >> 8) & 255); ib[35] = (uchar)(b & 255);
+         if(!Sha(ib, blk)) return false;
+         bi = b;
+      }
+      p[j] = (uchar)(c[j] ^ blk[j % 32]);
+   }
+   string s = CharArrayToString(p, 0, n);
+   if(StringSubstr(s, 0, 5) != "SGK1:") return false;
+   tok = StringSubstr(s, 5);
+   StringTrimLeft(tok); StringTrimRight(tok);
+   return StringLen(tok) > 10;
+}
+
+void PollPair()
+{
+   if(pairCode == "") MakePairCode(false);
+   string r;
+   int c = GhReq("GET", GhUrl("pair.json", true), "application/vnd.github.raw+json", "", r);   // bina token (public repo)
+   if(c == 404 || c == -1) return;
+   if(c != 200) { linkText = "Jodo code " + pairShow + " · " + LinkErr(c); return; }
+   if(JStr(r, "id") != pairId) return;                    // kisi aur code ka
+   string tok;
+   if(!PairDecrypt(pairCode, JStr(r, "n"), JStr(r, "c"), tok)) { linkText = "Code mila par khula nahi - app me dobara EA jodo"; return; }
+   ghTok = tok; tokFromFile = true;
+   FileWrite1(TokFile(), ghTok);
+   FileDelete(PairFile(), FILE_COMMON);
+   Print("SAMU GOLD KILLER: app se jud gaya (token VPS par save)");
+   // pair.json mitao
+   string m;
+   if(GhReq("GET", GhUrl("pair.json", true), "application/vnd.github+json", "", m) == 200)
+   {
+      string sha = JStr(m, "sha");
+      if(sha != "") GhReq("DELETE", GhUrl("pair.json", false), "application/vnd.github+json", "{\"message\":\"EA juda\",\"branch\":\"" + GitHubBranch + "\",\"sha\":\"" + sha + "\"}", m);
+   }
+   lastPoll = 0; pushNow = true; linkText = "Jud gaya";
 }
 //+------------------------------------------------------------------+
