@@ -112,7 +112,8 @@ body.blinkon .glow{animation:glow 1.4s ease-in-out infinite}
 .lvl.deep{color:var(--red);border-color:var(--red)}
 
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn{height:52px;border-radius:12px;font:700 14px var(--sans);letter-spacing:.14em;border:1px solid var(--line2);background:var(--panel2);color:var(--cream);position:relative;overflow:hidden}
+.btn,.core,.chip,nav button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.btn{touch-action:none;height:52px;border-radius:12px;font:700 14px var(--sans);letter-spacing:.14em;border:1px solid var(--line2);background:var(--panel2);color:var(--cream);position:relative;overflow:hidden}
 .btn.stop{color:var(--amber);border-color:#7a5716}
 .btn.kill{grid-column:1/3;background:linear-gradient(180deg,#5c1414,#3b0c0c);border-color:#a33;color:#ffe1e1}
 .btn .hold{position:absolute;left:0;bottom:0;height:3px;width:0;background:currentColor}
@@ -192,7 +193,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(246,220,143,.5))}
   <div class="wrap hd">
     <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".45" stop-color="#d9b45a"/><stop offset="1" stop-color="#7a5a20"/></linearGradient></defs><circle cx="32" cy="32" r="29" fill="none" stroke="url(#mg)" stroke-width="3"/><circle cx="32" cy="32" r="21" fill="url(#mg)"/><path d="M22 36l7-10 6 7 7-9" fill="none" stroke="#1c1205" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <div class="brand"><b>SAMU GOLD KILLER</b><small>COMMAND</small></div>
-    <span class="ver" id="ver">v1.1.1</span>
+    <span class="ver" id="ver">v1.1.2</span>
     <button class="ref" id="refresh" aria-label="Refresh: naya version laao">⟳</button>
   </div>
 </header>
@@ -559,7 +560,7 @@ if (typeof module !== 'undefined') module.exports = SGK;
 <script>
 (function () {
 'use strict';
-var APP_VERSION = '1.1.1';
+var APP_VERSION = '1.1.2';
 var $ = function (id) { return document.getElementById(id); };
 var L = SGK;
 document.getElementById('ver').textContent = 'v' + APP_VERSION;
@@ -768,7 +769,7 @@ $('startBtn').onclick = function () {
 $('stopBtn').onclick = function () { send('STOP', {}, 'STOP'); };
 function hold(btn, kind, label) {
   var h = null, bar = btn.querySelector('.hold'), t0 = 0;
-  function down(e) { e.preventDefault(); t0 = Date.now(); bar.style.transition = 'width 1.5s linear'; bar.style.width = '100%'; h = setTimeout(function () { h = null; bar.style.transition = 'none'; bar.style.width = '0'; vib([60, 40, 60]); send(kind, {}, label); }, 1500); }
+  function down(e) { e.preventDefault(); if (window.getSelection) window.getSelection().removeAllRanges(); if (btn.setPointerCapture && e.pointerId !== undefined) { try { btn.setPointerCapture(e.pointerId); } catch (x) {} } t0 = Date.now(); bar.style.transition = 'width 1.5s linear'; bar.style.width = '100%'; h = setTimeout(function () { h = null; bar.style.transition = 'none'; bar.style.width = '0'; vib([60, 40, 60]); send(kind, {}, label); }, 1500); }
   function up() { if (h) { clearTimeout(h); h = null; if (Date.now() - t0 < 1500) toast('1.5 second daba ke rakho'); } bar.style.transition = 'none'; bar.style.width = '0'; }
   btn.addEventListener('pointerdown', down); btn.addEventListener('pointerup', up); btn.addEventListener('pointerleave', up); btn.addEventListener('pointercancel', up);
   btn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
