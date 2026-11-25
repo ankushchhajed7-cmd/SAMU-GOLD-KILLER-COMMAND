@@ -1,0 +1,70 @@
+name: live branch (news + safai)
+# live branch: control.json (app likhta hai), status.json (EA likhta hai), news.json (yeh workflow)
+on:
+  schedule:
+    - cron: '7 * * * *'        # har ghante news
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+concurrency:
+  group: live-branch
+  cancel-in-progress: false
+jobs:
+  news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: live branch lao (na ho to banao)
+        run: |
+          git config --global user.name "gk-command-bot"
+          git config --global user.email "gk-command-bot@users.noreply.github.com"
+          url="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          if git ls-remote --exit-code --heads "$url" live >/dev/null 2>&1; then
+            git clone --depth 1 --branch live "$url" live
+          else
+            mkdir live && cd live && git init -q -b live && git remote add origin "$url"
+            printf '# live data\n\ncontrol.json = app ka command, status.json = EA ka haal, news.json = high-impact USD news.\nYe branch roz saaf hoti hai. Code main branch par hai.\n' > README.md
+            git add README.md && git commit -qm "live branch shuru" && git push -q origin live
+          fi
+      - name: ForexFactory news -> news.json
+        run: |
+          curl -fsSL -A "Mozilla/5.0 SAMU-GK-Command" "https://nfs.faireconomy.media/ff_calendar_thisweek.json" -o /tmp/ff.json || echo "[]" > /tmp/ff.json
+          cp live/news.json /tmp/old.json 2>/dev/null || echo "{}" > /tmp/old.json
+          python3 - <<'PY'
+          import json, datetime, re
+          try: ff = json.load(open('/tmp/ff.json'))
+          except Exception: ff = []
+          fed = re.compile(r'FOMC|Fed Chair|Powell|Federal Funds|Interest Rate Decision', re.I)
+          out = []
+          for e in ff:
+              if e.get('country') != 'USD': continue
+              if e.get('impact') != 'High' and not fed.search(e.get('title', '')): continue
+              try: t = int(datetime.datetime.fromisoformat(e['date']).timestamp())
+              except Exception: continue
+              out.append([t, 'USD ' + e.get('title', '')])
+          out.sort()
+          try: old = json.load(open('/tmp/old.json'))
+          except Exception: old = {}
+          if not out and old.get('list'): out = old['list']          # site band ho to purani list rakho
+          now = datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+          json.dump({'made': now, 'source': 'ForexFactory', 'list': out}, open('/tmp/news.json', 'w'))
+          print(len(out), 'news')
+          PY
+      - name: commit (roz 18:37 IST par branch saaf)
+        run: |
+          cd live
+          for i in 1 2 3 4; do
+            git fetch -q --depth 1 origin live
+            git checkout -q -B live FETCH_HEAD
+            cp /tmp/news.json news.json
+            git add -A
+            if [ "$(date -u +%H)" = "13" ] || [ "${{ github.event_name }}" = "push" ]; then
+              c=$(git commit-tree "$(git write-tree)" -m "live saaf $(date -u +%F)")
+              git push -q -f origin "$c:refs/heads/live" && echo "branch saaf" && break
+            else
+              git diff --cached --quiet && echo "badlav nahi" && break
+              git commit -qm "news update" && git push -q origin live && break
+            fi
+            sleep 3
+          done

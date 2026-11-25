@@ -1,0 +1,10 @@
+{
+  "ea": "SAMU GOLD KILLER v1.05",
+  "symbol": "XAUUSD / XAUUSDm (hedging account)",
+  "grid": { "PendingDistance": 0.80, "MinGridGap": 0.80, "TrailStep": 0.05, "StartLot": 0.01, "LotMultiplier": 1.3, "BasketTP_USD": 30, "MaxLevels": 22 },
+  "app": { "ControlMode": "APP", "PollSec": 15, "StatusSec": 30, "CmdExpiryMin": 10, "DefaultWindowMin": 60, "DefaultMaxTP": 2, "EndCloseUSD": 1.0 },
+  "calm": { "CalmRangeUSD": 5.0, "CalmMinutes": 30 },
+  "deep": { "UseDeepBounce": true, "DeepFromLevel": 8, "DeepLot": 0.20, "DeepDistance": 2.0, "DeepGap": 2.0, "DeepMaxTrades": 2, "DeepTP_USD": 15, "DeepHardLossUSD": 4000 },
+  "news": { "UseNewsFilter": true, "NewsBeforeMin": 30, "NewsAfterMin": 30, "NewsCurrencies": "USD", "NewsHighOnly": true },
+  "fixedMode": { "Session1": "09:00-10:30", "Session2": "22:30-00:30", "NightNewsSkip": true }
+}
