@@ -60,9 +60,26 @@ const c = L.cmd('START', { win: 60, maxTP: 2 }, 1764080000123);
 ok(c.id === 1764080000123 && c.ts === 1764080000 && c.cmd === 'START' && c.win === 60, 'START command banta hai');
 ok(L.unb64(L.b64('·₹ START')) === '·₹ START', 'base64 UTF-8 aana-jaana');
 
+// SHA-256 + EA jodo code
+const nodeSha = x => require('crypto').createHash('sha256').update(Buffer.from(x)).digest('hex');
+ok(L.hex(L.sha256('abc')) === 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad', 'sha256("abc") sahi');
+let shaOk = true; for (let n = 0; n < 140; n += 7) { const u = new Uint8Array(n).map((_, i) => (i * 37 + n) & 255); if (L.hex(L.sha256(u)) !== nodeSha(u)) shaOk = false; }
+ok(shaOk, 'sha256 = node crypto (0–140 byte)');
+ok(L.normCode('k7m-3qx 9pa') === 'K7M3QX9PA' && L.codeOk('K7M3QX9PA') && !L.codeOk('K7M3QX9P0'), 'code saaf + jaanch');
+const tok = 'github_pat_11ABCDEFG0123456789_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ab';
+const enc = L.pairEncrypt('K7M3QX9PA', tok, 'a1b2c3d4e5f60718293a4b5c6d7e8f90');
+ok(enc.id === L.hex(L.sha256('SGKID:K7M3QX9PA'), 8) && enc.c.length === 2 * (tok.length + 5), 'pair.json id + lambai');
+ok(L.pairDecrypt('K7M3QX9PA', enc) === tok, 'sahi code se token khulta hai');
+ok(L.pairDecrypt('K7M3QX9PB', enc) === null, 'galat code se nahi khulta');
+// EA ke saath same niyam
+const eaSrc = fs.readFileSync('ea/SAMU GOLD KILLER v1.06.mq5', 'utf8');
+ok(/i < 5000; i\+\+/.test(eaSrc) && logic.includes('i < 5000; i++'), 'KDF 5000 dono me');
+ok(eaSrc.includes('"SGK1:"') && eaSrc.includes('"SGKID:"') && eaSrc.includes('code + ":" + nonce'), 'EA: SGK1 / SGKID / code:nonce');
+ok(eaSrc.includes('ABCDEFGHJKMNPQRSTUVWXYZ23456789') && logic.includes('ABCDEFGHJKMNPQRSTUVWXYZ23456789'), 'code ke akshar dono me same');
+
 // demo status = EA status keys
 const D = JSON.parse(fs.readFileSync('data/demo-status.json', 'utf8'));
-const ea = fs.readFileSync('ea/SAMU GOLD KILLER v1.05.mq5', 'utf8');
+const ea = fs.readFileSync('ea/SAMU GOLD KILLER v1.06.mq5', 'utf8');
 const miss = Object.keys(D).filter(k => !ea.includes('\\"' + k + '\\":'));
 ok(!miss.length, 'demo ke sab keys EA bhejta hai ' + miss.join(','));
 ok(D.bars.length === 120 && D.bars[0].length === 5, 'demo 120 bars');

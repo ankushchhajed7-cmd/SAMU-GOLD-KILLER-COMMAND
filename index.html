@@ -192,7 +192,7 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(246,220,143,.5))}
   <div class="wrap hd">
     <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".45" stop-color="#d9b45a"/><stop offset="1" stop-color="#7a5a20"/></linearGradient></defs><circle cx="32" cy="32" r="29" fill="none" stroke="url(#mg)" stroke-width="3"/><circle cx="32" cy="32" r="21" fill="url(#mg)"/><path d="M22 36l7-10 6 7 7-9" fill="none" stroke="#1c1205" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <div class="brand"><b>SAMU GOLD KILLER</b><small>COMMAND</small></div>
-    <span class="ver" id="ver">v1.0.0</span>
+    <span class="ver" id="ver">v1.1.0</span>
     <button class="ref" id="refresh" aria-label="Refresh: naya version laao">⟳</button>
   </div>
 </header>
@@ -363,6 +363,15 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(246,220,143,.5))}
       </div>
     </div>
     <div class="sec">
+      <span class="lbl">EA jodo (VPS)</span>
+      <div class="panel">
+        <p style="font-size:14px">VPS par EA ke dashboard me <b class="gold">JODO CODE</b> dikhega (jaise <b>K7M-3QX-9PA</b>). Wahi yahan likho — VPS par kuch paste nahi karna.</p>
+        <label class="field"><span>Jodo code (9 akshar)</span><input id="pairIn" autocomplete="off" autocapitalize="characters" maxlength="13" placeholder="XXX-XXX-XXX" style="letter-spacing:.25em;text-transform:uppercase;font-weight:700"></label>
+        <div class="row"><button class="gbtn" id="pairBtn">EA jodo</button></div>
+        <p class="muted" style="font-size:12px;margin-top:10px" id="pairState">Token code se lock hokar jaata hai. EA kholte hi file mita deta hai.</p>
+      </div>
+    </div>
+    <div class="sec">
       <span class="lbl">Repo</span>
       <div class="panel">
         <label class="field"><span>Repo (owner/naam)</span><input id="repoIn" autocomplete="off"></label>
@@ -387,7 +396,8 @@ nav button.on svg{filter:drop-shadow(0 0 6px rgba(246,220,143,.5))}
           <li>GitHub → Settings → Developer settings → Fine-grained token → sirf <code>SAMU-GOLD-KILLER-COMMAND</code> repo → Contents: Read and write.</li>
           <li>Wahi token yahan PIN ke saath save karo.</li>
           <li>VPS par MT5 → Tools → Options → Expert Advisors → "Allow WebRequest" me <code>https://api.github.com</code> jodo.</li>
-          <li>EA <code>SAMU GOLD KILLER v1.05</code> chart par lagao, input <code>GitHubToken</code> me token daalo, <code>ControlMode</code> = APP.</li>
+          <li>EA <code>SAMU GOLD KILLER v1.06</code> chart par lagao, <code>ControlMode</code> = APP, token khaali. Dashboard par JODO CODE aayega.</li>
+          <li>Upar "EA jodo" me wo code likho → EA jodo.</li>
           <li>Status upar hara "EA LIVE" dikhe to sab theek.</li>
         </ol>
       </div>
@@ -495,6 +505,50 @@ var SGK = (function () {
     for (var k in (extra || {})) c[k] = extra[k];
     return c;
   };
+  // ---- SHA-256 (EA ke CryptEncode jaisa) ----
+  var K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  L.sha256 = function (msg) {
+    var m = typeof msg === 'string' ? L.ascii(msg) : msg, l = m.length, n = ((l + 9 + 63) >> 6) << 6, b = new Uint8Array(n);
+    b.set(m); b[l] = 0x80; var bits = l * 8; for (var i = 0; i < 4; i++) b[n - 1 - i] = (bits >>> (8 * i)) & 255; b[n - 5] = Math.floor(l / 536870912) & 255;
+    var H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19], W = new Array(64);
+    for (var o = 0; o < n; o += 64) {
+      for (var t = 0; t < 16; t++) W[t] = (b[o + 4 * t] << 24) | (b[o + 4 * t + 1] << 16) | (b[o + 4 * t + 2] << 8) | b[o + 4 * t + 3];
+      for (t = 16; t < 64; t++) { var x = W[t - 15], y = W[t - 2]; W[t] = (((x >>> 7 | x << 25) ^ (x >>> 18 | x << 14) ^ (x >>> 3)) + W[t - 16] + ((y >>> 17 | y << 15) ^ (y >>> 19 | y << 13) ^ (y >>> 10)) + W[t - 7]) | 0; }
+      var a = H[0], c = H[1], d = H[2], e = H[3], f = H[4], g = H[5], h = H[6], k = H[7];
+      for (t = 0; t < 64; t++) {
+        var T1 = (k + ((f >>> 6 | f << 26) ^ (f >>> 11 | f << 21) ^ (f >>> 25 | f << 7)) + ((f & g) ^ (~f & h)) + K[t] + W[t]) | 0;
+        var T2 = (((a >>> 2 | a << 30) ^ (a >>> 13 | a << 19) ^ (a >>> 22 | a << 10)) + ((a & c) ^ (a & d) ^ (c & d))) | 0;
+        k = h; h = g; g = f; f = (e + T1) | 0; e = d; d = c; c = a; a = (T1 + T2) | 0;
+      }
+      H[0] = (H[0] + a) | 0; H[1] = (H[1] + c) | 0; H[2] = (H[2] + d) | 0; H[3] = (H[3] + e) | 0; H[4] = (H[4] + f) | 0; H[5] = (H[5] + g) | 0; H[6] = (H[6] + h) | 0; H[7] = (H[7] + k) | 0;
+    }
+    var out = new Uint8Array(32); for (i = 0; i < 8; i++) { out[4 * i] = H[i] >>> 24; out[4 * i + 1] = (H[i] >>> 16) & 255; out[4 * i + 2] = (H[i] >>> 8) & 255; out[4 * i + 3] = H[i] & 255; }
+    return out;
+  };
+  L.ascii = function (s) { var a = unescape(encodeURIComponent(s)), u = new Uint8Array(a.length); for (var i = 0; i < a.length; i++) u[i] = a.charCodeAt(i); return u; };
+  L.hex = function (u, n) { var s = ''; for (var i = 0; i < (n || u.length); i++) s += (u[i] < 16 ? '0' : '') + u[i].toString(16); return s; };
+  L.unhex = function (h) { var u = new Uint8Array(h.length >> 1); for (var i = 0; i < u.length; i++) u[i] = parseInt(h.substr(2 * i, 2), 16); return u; };
+  // ---- EA jodo code (EA v1.06 ke PairDecrypt jaisa) ----
+  L.normCode = function (s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); };
+  L.codeOk = function (c) { return /^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{9}$/.test(c); };
+  L.pairId = function (code) { return L.hex(L.sha256('SGKID:' + code), 8); };
+  L.pairStream = function (code, nonce, len) {
+    var k = L.sha256(code + ':' + nonce);
+    for (var i = 0; i < 5000; i++) k = L.sha256(k);
+    var out = new Uint8Array(len), blk = null, bi = -1, ib = new Uint8Array(36); ib.set(k);
+    for (var j = 0; j < len; j++) { var b = Math.floor(j / 32); if (b !== bi) { ib[32] = (b >>> 24) & 255; ib[33] = (b >>> 16) & 255; ib[34] = (b >>> 8) & 255; ib[35] = b & 255; blk = L.sha256(ib); bi = b; } out[j] = blk[j % 32]; }
+    return out;
+  };
+  L.pairEncrypt = function (code, token, nonce) {
+    var p = L.ascii('SGK1:' + token), ks = L.pairStream(code, nonce, p.length), c = new Uint8Array(p.length);
+    for (var i = 0; i < p.length; i++) c[i] = p[i] ^ ks[i];
+    return { v: 1, id: L.pairId(code), n: nonce, c: L.hex(c) };
+  };
+  L.pairDecrypt = function (code, o) {
+    var c = L.unhex(o.c), ks = L.pairStream(code, o.n, c.length), s = '';
+    for (var i = 0; i < c.length; i++) s += String.fromCharCode(c[i] ^ ks[i]);
+    return s.indexOf('SGK1:') === 0 ? s.slice(5) : null;
+  };
   L.b64 = function (s) { return btoa(unescape(encodeURIComponent(s))); };
   L.unb64 = function (s) { return decodeURIComponent(escape(atob(String(s).replace(/\s/g, '')))); };
   return L;
@@ -505,7 +559,7 @@ if (typeof module !== 'undefined') module.exports = SGK;
 <script>
 (function () {
 'use strict';
-var APP_VERSION = '1.0.0';
+var APP_VERSION = '1.1.0';
 var $ = function (id) { return document.getElementById(id); };
 var L = SGK;
 document.getElementById('ver').textContent = 'v' + APP_VERSION;
@@ -609,6 +663,25 @@ $('testCon').onclick = function () {
     var w = x.j.permissions && x.j.permissions.push;
     modal('Connection theek', '<p>Repo: <b>' + esc(x.j.full_name) + '</b></p><p>Likhne ki ijazat: <b class="' + (w ? 'g' : 'r') + '">' + (w ? 'Haan' : 'Nahi (sirf dekhna)') + '</b></p><p class="muted">API limit bacha: ' + (x.r.headers.get('x-ratelimit-remaining') || '?') + '</p>');
   }).catch(function (e) { modal('Internet nahi', '<p>' + esc(e.message) + '</p>'); });
+};
+
+// ---------- EA jodo ----------
+$('pairIn').addEventListener('input', function () { var c = L.normCode(this.value).slice(0, 9); this.value = c.replace(/(.{3})(?=.)/g, '$1-'); });
+$('pairBtn').onclick = function () {
+  var code = L.normCode($('pairIn').value);
+  if (!L.codeOk(code)) return toast('Code 9 akshar ka — dashboard se dekh ke likho');
+  if (!token) { if (localStorage.getItem('sgkc_tok')) askPin(); else toast('Pehle upar token save karo'); return; }
+  var btn = this; btn.disabled = true; $('pairState').textContent = 'Lock kar rahe hain…';
+  setTimeout(function () {
+    var nonce = L.hex(crypto.getRandomValues(new Uint8Array(16)));
+    var obj = L.pairEncrypt(code, token, nonce); obj.ts = Math.floor(Date.now() / 1000);
+    ghWrite('pair.json', obj, 'app: EA jodo').then(function () {
+      S.pairAt = Date.now(); $('pairIn').value = '';
+      $('pairState').innerHTML = '<span class="a">Bhej diya. 30–60 sec me EA jud jayega…</span>';
+      addLog('EA jodo code bheja', 'gold'); toast('Code bheja — EA ka intezaar');
+    }).catch(function (e) { $('pairState').innerHTML = '<span class="r">Nahi gaya: ' + esc(e.message) + '</span>'; })
+      .finally(function () { btn.disabled = false; });
+  }, 30);
 };
 
 // ---------- repo / alert settings ----------
@@ -731,7 +804,7 @@ function render() {
   if (!S.ok && S.err) { $('liveTxt').textContent = 'GitHub se nahi juda'; $('liveSub').textContent = S.err; }
   else if (on) { $('liveTxt').innerHTML = '<span class="g">EA LIVE</span> · ' + esc(st.sym || '') + ' · ' + esc(st.acc || ''); $('liveSub').textContent = 'v' + (st.ea || '?') + ' · ' + (now - st.t) + ' sec pehle · ' + (token ? 'buttons chalu' : 'sirf dekhna'); }
   else if (st) { $('liveTxt').innerHTML = '<span class="r blink">EA OFFLINE</span>'; $('liveSub').textContent = 'Aakhri khabar ' + Math.round((now - st.t) / 60) + ' min pehle — VPS / MT5 dekho'; }
-  else { $('liveTxt').textContent = 'EA ka status nahi mila'; $('liveSub').textContent = token ? 'EA v1.05 chart par lagao' : 'Settings me token daalo'; }
+  else { $('liveTxt').textContent = 'EA ka status nahi mila'; $('liveSub').textContent = token ? 'EA v1.06 lagao → Settings → EA jodo' : 'Settings me token daalo'; }
   if (st && !on) alertOnce('off', 'EA OFFLINE', 'VPS / MT5 dekho', 330); else clearAlert('off');
 
   // analysis inputs
@@ -773,7 +846,7 @@ function render() {
     bt = st.banner && st.banner.t || 'STATUS'; bm = st.banner && st.banner.m || ''; var k = st.banner && st.banner.k || 'a';
     bc = k === 'g' ? 'bn-g' : k === 'r' ? 'bn-r' : 'bn-a'; blink = k === 'r';
     if (!on) { bt = 'OFFLINE'; bm = 'EA ka status ' + Math.round((now - st.t) / 60) + ' min se nahi aaya. VPS, MT5 aur WebRequest dekho.'; bc = 'bn-r'; blink = true; }
-  } else if (token || localStorage.getItem('sgkc_tok')) { bt = 'INTEZAAR'; bm = 'EA v1.05 VPS par chart par lagao — status yahan dikhega.'; }
+  } else if (token || localStorage.getItem('sgkc_tok')) { bt = 'INTEZAAR'; bm = 'EA v1.06 chart par lagao, dashboard ka JODO CODE Settings → EA jodo me likho.'; }
   var ban = $('banner'); ban.className = 'banner ' + bc + (blink ? ' glow' : '');
   $('banT').textContent = bt; $('banT').className = blink ? 'blink' : ''; $('banM').textContent = bm;
   if (st && st.banner && st.banner.k === 'r' && on) alertOnce('ban_' + st.banner.t, 'SAMU GOLD KILLER: ' + st.banner.t, st.banner.m, 440); else clearAlert('ban_' + (st && st.banner ? st.banner.t : ''));
@@ -788,6 +861,8 @@ function render() {
     side('b', st.buy, st.tp || 30, st.deep && st.deep.buy);
     side('s', st.sell, st.tp || 30, st.deep && st.deep.sell);
   }
+  // EA jud gaya?
+  if (S.pairAt && st && st.t * 1000 > S.pairAt) { S.pairAt = null; addLog('EA jud gaya ✓', 'g'); $('pairState').innerHTML = '<span class="g">EA jud gaya ✓</span>'; beep(1180, 200); vib([80, 60, 80]); toast('EA jud gaya ✓'); }
   // pending ack
   if (S.pending && st && st.lastCmd && +st.lastCmd.id === +S.pending.id) {
     var ok = !/^(ignored|fail|purana|expired|band)/i.test(st.lastCmd.res || '');
