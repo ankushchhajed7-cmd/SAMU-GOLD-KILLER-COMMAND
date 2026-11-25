@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#030303">
+<meta name="description" content="SAMU GOLD KILLER COMMAND — market check karo, phir VPS par EA START karo">
+<title>SAMU GOLD KILLER · COMMAND</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700;6..96,800&family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#030303; --vault:#0c0a07; --panel:#13100b; --panel2:#1a160f; --line:#3a2f1e; --line2:#5a4728;
+  --gold:#d9b45a; --gold-hi:#f6dc8f; --gold-lo:#8c6e2f; --cream:#f4ead5; --muted:#a39780; --dim:#6f6552;
+  --green:#35e39a; --green-bg:#0a2a1c; --red:#ff5252; --red-bg:#2e0d0d; --amber:#ffb547; --amber-bg:#2e2108;
+  --serif:"Bodoni Moda", Georgia, "Times New Roman", serif; --sans:"Hind", "Segoe UI", system-ui, sans-serif;
+  --r1:6px; --r2:14px; --r3:999px;
+  --safe-b:env(safe-area-inset-bottom, 0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--ink);color:var(--cream);font-family:var(--sans);font-size:16px;line-height:1.45}
+body{min-height:100vh;padding-bottom:calc(76px + var(--safe-b));
+  background:radial-gradient(120% 60% at 50% -10%, #1b150b 0%, var(--ink) 60%) fixed}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold-hi);outline-offset:3px;border-radius:6px}
+.lbl{font:600 11px/1.2 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.num{font-family:var(--serif);font-variant-numeric:lining-nums tabular-nums}
+.muted{color:var(--muted)} .g{color:var(--green)} .r{color:var(--red)} .a{color:var(--amber)} .gold{color:var(--gold)}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+
+/* header */
+header{position:sticky;top:0;z-index:30;background:rgba(3,3,3,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;gap:10px;height:58px}
+.mark{width:34px;height:34px;flex:none}
+.brand{flex:1;min-width:0}
+.brand b{display:block;font:700 15px/1.1 var(--serif);letter-spacing:.14em;color:var(--gold-hi);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{display:block;font:600 10px/1.3 var(--sans);letter-spacing:.3em;color:var(--muted)}
+.ver{font:600 11px var(--sans);color:var(--gold);border:1px solid var(--line2);border-radius:var(--r3);padding:3px 9px;letter-spacing:.06em}
+.ref{width:38px;height:38px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;color:var(--gold-hi);font-size:20px}
+.ref.spin{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* live strip */
+.strip{display:flex;align-items:center;gap:10px;padding:10px 0 2px;font-size:13px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--dim);flex:none}
+.dot.on{background:var(--green);box-shadow:0 0 0 0 rgba(53,227,154,.6);animation:ping 2s infinite}
+.dot.off{background:var(--red)}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(53,227,154,.55)}70%{box-shadow:0 0 0 9px rgba(53,227,154,0)}100%{box-shadow:0 0 0 0 rgba(53,227,154,0)}}
+.strip .clk{margin-left:auto;text-align:right}
+.strip .clk b{font:700 20px/1 var(--serif);color:var(--cream)}
+.strip .clk small{display:block;font-size:10px;letter-spacing:.2em;color:var(--gold)}
+
+/* blink (option) */
+body.blinkon .blink{animation:blink 1s steps(2,start) infinite}
+body.blinkon .glow{animation:glow 1.4s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+@keyframes glow{50%{box-shadow:0 0 0 2px currentColor, 0 0 26px currentColor}}
+@media (prefers-reduced-motion:reduce){body.blinkon .blink,body.blinkon .glow,.dot.on{animation:none}.blink{text-decoration:underline}}
+
+/* banner */
+.banner{margin:12px 0 0;border-radius:var(--r2);padding:12px 14px;display:flex;gap:12px;align-items:center;border:1px solid}
+.banner b{font:800 16px/1.1 var(--sans);letter-spacing:.12em;white-space:nowrap}
+.banner span{font-size:14px;line-height:1.35}
+.bn-g{background:var(--green-bg);border-color:#1b7a52;color:var(--green)}
+.bn-a{background:var(--amber-bg);border-color:#7a5716;color:var(--amber)}
+.bn-r{background:var(--red-bg);border-color:#8a2424;color:var(--red)}
+.banner span{color:var(--cream)}
+
+/* vault hero */
+.vault{position:relative;margin:18px auto 4px;width:min(320px,86vw);aspect-ratio:1}
+.vault svg{position:absolute;inset:0;width:100%;height:100%}
+.vault .core{position:absolute;inset:17%;border-radius:50%;display:grid;place-items:center;text-align:center;
+  background:radial-gradient(circle at 35% 28%, #fff3c4 0%, #e8c46a 22%, #b8892f 58%, #6d4e18 100%);
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.5), inset 0 -10px 24px rgba(0,0,0,.45), 0 18px 40px rgba(0,0,0,.6), 0 0 0 6px #1a140a, 0 0 0 7px var(--line2);
+  color:#1c1205;transition:transform .12s}
+.vault .core:active{transform:scale(.97)}
+.vault .core[disabled]{filter:grayscale(.85) brightness(.6);cursor:not-allowed}
+.core .big{font:800 clamp(30px,10vw,42px)/1 var(--serif);letter-spacing:.08em;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.core .sub{font:700 11px/1.3 var(--sans);letter-spacing:.24em;margin-top:6px}
+.core.armed{background:radial-gradient(circle at 35% 28%, #c9ffe6 0%, #45e3a0 30%, #128a59 70%, #064a2f 100%)}
+.core.armed .big{font-size:clamp(28px,9vw,38px)}
+.score{text-align:center;margin-top:6px}
+.score .v{font:800 26px/1 var(--sans);letter-spacing:.18em}
+.score .m{font-size:14px;color:var(--muted);margin-top:4px}
+
+/* chips */
+.opts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0 4px}
+.chipset{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r3);padding:4px}
+.chipset > span{font:600 11px var(--sans);letter-spacing:.16em;color:var(--muted);padding:0 6px 0 10px}
+.chip{min-width:44px;height:34px;padding:0 10px;border-radius:var(--r3);font:600 14px var(--sans);color:var(--muted)}
+.chip.on{background:linear-gradient(180deg,var(--gold-hi),var(--gold));color:#1c1205}
+
+/* sections */
+.sec{margin-top:22px}
+.sec > .lbl{display:block;margin-bottom:10px}
+.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--r2);padding:14px}
+.eqrow{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.eq{font:700 clamp(34px,11vw,46px)/1 var(--serif);color:var(--gold-hi)}
+.eqsub{font-size:14px;color:var(--muted);margin-top:6px}
+.side{display:grid;grid-template-columns:62px 1fr auto;gap:4px 12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.side:first-of-type{border-top:0}
+.side .tag{font:800 13px var(--sans);letter-spacing:.16em}
+.side .pl{font:700 22px/1 var(--serif);text-align:right}
+.side .meta{grid-column:2/4;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.bar{height:6px;border-radius:3px;background:#2a2318;overflow:hidden;grid-column:2/3}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi));border-radius:3px;transition:width .5s}
+.lvl{font:700 12px var(--sans);padding:2px 8px;border-radius:var(--r3);border:1px solid var(--line2);color:var(--cream)}
+.lvl.deep{color:var(--red);border-color:var(--red)}
+
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{height:52px;border-radius:12px;font:700 14px var(--sans);letter-spacing:.14em;border:1px solid var(--line2);background:var(--panel2);color:var(--cream);position:relative;overflow:hidden}
+.btn.stop{color:var(--amber);border-color:#7a5716}
+.btn.kill{grid-column:1/3;background:linear-gradient(180deg,#5c1414,#3b0c0c);border-color:#a33;color:#ffe1e1}
+.btn .hold{position:absolute;left:0;bottom:0;height:3px;width:0;background:currentColor}
+.btn[disabled]{opacity:.45}
+.hint{font-size:12px;color:var(--dim);margin-top:8px;text-align:center}
+
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.kv:first-child{border-top:0}
+.kv b{font-weight:600;text-align:right}
+.checks .kv{align-items:flex-start}
+.ck{width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;font:800 13px var(--sans);flex:none;margin-right:8px}
+.ck.ok{background:var(--green-bg);color:var(--green)} .ck.no{background:var(--red-bg);color:var(--red)} .ck.wa{background:var(--amber-bg);color:var(--amber)}
+.checks .t{display:flex;align-items:flex-start;flex:1}
+
+canvas{display:block;width:100%;height:190px}
+.heat{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.heat button{aspect-ratio:1/1.15;border-radius:5px;font:600 10px var(--sans);color:rgba(0,0,0,.75);position:relative}
+.heat button.now{outline:2px solid var(--cream);outline-offset:1px}
+.heat button.ses::after{content:"";position:absolute;left:30%;right:30%;bottom:3px;height:2px;background:#000;border-radius:2px;opacity:.6}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:10px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+.fc{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.fc div{background:var(--vault);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.fc b{display:block;font:700 22px/1.1 var(--serif)}
+.fc small{font-size:11px;color:var(--muted);letter-spacing:.04em}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font:600 10px var(--sans);letter-spacing:.18em;color:var(--gold);text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+td{padding:9px 4px;border-bottom:1px solid #221c12}
+td:last-child,th:last-child{text-align:right}
+.empty{padding:22px 8px;text-align:center;color:var(--muted);font-size:14px}
+
+.log li{list-style:none;display:flex;gap:10px;font-size:13px;padding:8px 0;border-top:1px solid var(--line)}
+.log li:first-child{border-top:0}
+.log time{color:var(--dim);flex:none;width:44px}
+
+/* settings */
+.field{display:block;margin-top:12px}
+.field span{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.field input,.field select{width:100%;height:46px;background:var(--vault);border:1px solid var(--line2);border-radius:10px;color:var(--cream);padding:0 12px;font:500 15px var(--sans)}
+.tog{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:15px}
+.tog:first-child{border-top:0}
+.sw{width:50px;height:30px;border-radius:15px;background:#2a2318;position:relative;flex:none;border:1px solid var(--line2)}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--muted);transition:.2s}
+.sw.on{background:var(--gold-lo)} .sw.on::after{left:23px;background:var(--gold-hi)}
+.gbtn{height:46px;border-radius:10px;padding:0 16px;background:linear-gradient(180deg,var(--gold-hi),var(--gold));color:#1c1205;font:700 14px var(--sans);letter-spacing:.08em}
+.obtn{height:46px;border-radius:10px;padding:0 16px;border:1px solid var(--line2);color:var(--cream);font:600 14px var(--sans)}
+.row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+ol.steps{padding-left:20px;font-size:14px;color:var(--cream)} ol.steps li{margin:6px 0} code{font-size:12px;color:var(--gold-hi);background:var(--vault);padding:1px 5px;border-radius:4px;word-break:break-all}
+.prose p{font-size:14px;margin:8px 0;color:var(--cream)} .prose p.muted{color:var(--muted)}
+
+/* nav */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(6,5,3,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:var(--safe-b)}
+nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav button{height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--dim);font:600 10px var(--sans);letter-spacing:.14em}
+nav svg{width:22px;height:22px}
+nav button.on{color:var(--gold-hi)}
+nav button.on svg{filter:drop-shadow(0 0 6px rgba(246,220,143,.5))}
+.pg{display:none}.pg.on{display:block}
+
+/* modal */
+.mask{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.72);display:none;align-items:flex-end;justify-content:center;padding:16px}
+.mask.on{display:flex}
+.sheet{width:100%;max-width:520px;background:linear-gradient(180deg,#1d180f,#120f0a);border:1px solid var(--line2);border-radius:18px;padding:20px;margin-bottom:var(--safe-b)}
+.sheet h3{font:700 22px/1.2 var(--serif);color:var(--gold-hi)}
+.sheet p{font-size:15px;margin:10px 0;color:var(--cream)}
+.sheet .row{justify-content:flex-end}
+.pin{letter-spacing:.6em;text-align:center;font-size:22px!important}
+.toast{position:fixed;left:50%;bottom:calc(86px + var(--safe-b));transform:translateX(-50%) translateY(20px);opacity:0;z-index:70;background:#1d180f;border:1px solid var(--line2);color:var(--cream);padding:10px 16px;border-radius:12px;font-size:14px;transition:.25s;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body class="blinkon">
+
+<header>
+  <div class="wrap hd">
+    <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset=".45" stop-color="#d9b45a"/><stop offset="1" stop-color="#7a5a20"/></linearGradient></defs><circle cx="32" cy="32" r="29" fill="none" stroke="url(#mg)" stroke-width="3"/><circle cx="32" cy="32" r="21" fill="url(#mg)"/><path d="M22 36l7-10 6 7 7-9" fill="none" stroke="#1c1205" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="brand"><b>SAMU GOLD KILLER</b><small>COMMAND</small></div>
+    <span class="ver" id="ver">v1.0.0</span>
+    <button class="ref" id="refresh" aria-label="Refresh: naya version laao">⟳</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="strip">
+    <span class="dot" id="liveDot"></span>
+    <div><b id="liveTxt">EA se juda nahi</b><div class="muted" id="liveSub" style="font-size:12px">Settings me token daalo</div></div>
+    <div class="clk"><b class="num" id="clk">--:--</b><small id="clkd">IST</small></div>
+  </div>
+
+  <!-- COMMAND -->
+  <section class="pg on" id="pg-cmd">
+    <div class="banner bn-a" id="banner"><b id="banT">SETUP</b><span id="banM">Pehle Settings me GitHub token jodo.</span></div>
+
+    <div class="vault">
+      <svg viewBox="0 0 320 320" aria-hidden="true">
+        <defs>
+          <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6dc8f"/><stop offset="1" stop-color="#8c6e2f"/></linearGradient>
+        </defs>
+        <circle cx="160" cy="160" r="150" fill="none" stroke="#1d170d" stroke-width="2"/>
+        <g id="ticks"></g>
+        <circle cx="160" cy="160" r="128" fill="none" stroke="#241d11" stroke-width="12"/>
+        <circle id="arc" cx="160" cy="160" r="128" fill="none" stroke="url(#rg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 804" transform="rotate(-90 160 160)"/>
+      </svg>
+      <button class="core" id="startBtn" aria-label="START"><div><div class="big" id="coreBig">START</div><div class="sub" id="coreSub">EA KO SHURU KARO</div></div></button>
+    </div>
+    <div class="score"><div class="v" id="verdict">—</div><div class="m" id="verdictMsg">Market data aane do</div></div>
+
+    <div class="opts">
+      <div class="chipset" id="winSet"><span>WINDOW</span><button class="chip" data-v="30">30m</button><button class="chip" data-v="60">60m</button><button class="chip" data-v="90">90m</button></div>
+      <div class="chipset" id="tpSet"><span>MAX TP</span><button class="chip" data-v="1">1</button><button class="chip" data-v="2">2</button><button class="chip" data-v="3">3</button></div>
+    </div>
+
+    <div class="sec">
+      <span class="lbl">Account</span>
+      <div class="panel">
+        <div class="eqrow">
+          <div><div class="eq num" id="eq">$—</div><div class="eqsub" id="eqsub">Balance — · Floating —</div></div>
+          <div style="text-align:right"><div class="lbl" style="font-size:10px">Aaj</div><div class="num" style="font:700 22px var(--serif)" id="today">—</div><div class="muted" style="font-size:12px" id="todayc">— baskets</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <span class="lbl">Basket</span>
+      <div class="panel" id="sides">
+        <div class="side"><span class="tag g">BUY</span><div class="bar"><i id="bBar" style="width:0"></i></div><span class="pl num" id="bPl">—</span><div class="meta"><span id="bMeta">—</span><span class="lvl" id="bLv">L0</span></div></div>
+        <div class="side"><span class="tag r">SELL</span><div class="bar"><i id="sBar" style="width:0"></i></div><span class="pl num" id="sPl">—</span><div class="meta"><span id="sMeta">—</span><span class="lvl" id="sLv">L0</span></div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <span class="lbl">Control</span>
+      <div class="acts">
+        <button class="btn stop" id="stopBtn" style="grid-column:1/3">STOP — nayi basket band</button>
+        <button class="btn" id="cBuy">CLOSE BUY<i class="hold"></i></button>
+        <button class="btn" id="cSell">CLOSE SELL<i class="hold"></i></button>
+        <button class="btn kill" id="cAll">CLOSE ALL — daba ke rakho<i class="hold"></i></button>
+      </div>
+      <p class="hint">STOP = nayi basket band, khuli basket ka TP chalu. CLOSE button 1.5 second daba ke rakhne par chalte hain.</p>
+    </div>
+
+    <div class="sec">
+      <span class="lbl">Command log</span>
+      <div class="panel"><ul class="log" id="log"><li class="muted">Abhi koi command nahi</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ANALYSIS -->
+  <section class="pg" id="pg-ana">
+    <div class="sec">
+      <span class="lbl">Pichhle 2 ghante · M1</span>
+      <div class="panel"><canvas id="chart" aria-label="Gold M1 chart"></canvas>
+        <div class="legend"><span><i style="background:rgba(217,180,90,.25)"></i>Pichhle 30 min ka range</span><span id="lastPx"></span></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <span class="lbl">START se pehle jaanch</span>
+      <div class="panel checks" id="checks"><div class="empty">EA ka data aane par jaanch dikhegi</div></div>
+    </div>
+
+    <div class="sec">
+      <span class="lbl">Agla 1 ghanta · itihaas</span>
+      <div class="panel">
+        <p class="muted" style="font-size:13px" id="fcTitle">Isi samay aur isi tarah ke market me pichhle din kya hua</p>
+        <div class="fc">
+          <div><b class="num" id="fcMv">—</b><small>aam move</small></div>
+          <div><b class="num" id="fcBig">—</b><small>$15+ move</small></div>
+          <div><b class="num" id="fcWin">—</b><small>START plus me</small></div>
+          <div><b class="num" id="fcDeep">—</b><small>basket L8+</small></div>
+          <div><b class="num" id="fcWorst">—</b><small>sabse bura</small></div>
+          <div><b class="num" id="fcN">—</b><small>din dekhe</small></div>
+        </div>
+        <p class="muted" style="font-size:12px;margin-top:10px">Ye bhavishyavaani nahi hai. Sirf pichhle din ka hisaab hai.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <span class="lbl">Din bhar ka risk (IST)</span>
+      <div class="panel">
+        <div class="heat" id="heat"></div>
+        <div class="legend"><span><i style="background:#35e39a"></i>Kam</span><span><i style="background:#ffb547"></i>Dhyan</span><span><i style="background:#ff5252"></i>Zyada</span><span>Safed ghera = abhi</span></div>
+        <p class="muted" style="font-size:13px;margin-top:10px" id="heatInfo">Kisi khaane ko dabao</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <span class="lbl">News · agle 24 ghante</span>
+      <div class="panel" id="newsList"><div class="empty">News list aa rahi hai</div></div>
+    </div>
+  </section>
+
+  <!-- TRADES -->
+  <section class="pg" id="pg-trd">
+    <div class="sec">
+      <span class="lbl">Khule trade</span>
+      <div class="panel" style="padding:8px 10px">
+        <table><thead><tr><th>Type</th><th>Lot</th><th>Price</th><th>Time</th><th>P&amp;L</th></tr></thead><tbody id="trades"><tr><td colspan="5" class="empty">Koi khula trade nahi</td></tr></tbody></table>
+      </div>
+    </div>
+    <div class="sec">
+      <span class="lbl">EA ki halat</span>
+      <div class="panel" id="eaKv"><div class="empty">EA offline</div></div>
+    </div>
+  </section>
+
+  <!-- STRATEGY -->
+  <section class="pg" id="pg-str">
+    <div class="sec">
+      <span class="lbl">Strategy</span>
+      <div class="panel prose">
+        <p>Har side (BUY aur SELL) ki alag basket. BUY STOP market se $0.80 upar lagta hai aur girte gold ke saath neeche khiskta hai. Gold $0.80 palte to trade lagta hai.</p>
+        <p>Agla level pichhle trade se kam se kam $0.80 door. Lot 0.01 × 1.3 har level. Side ka profit $30 hote hi us side ke sab trade band.</p>
+        <p>App mode: START dabane par window (30/60/90 min) khulti hai. Window me hi nayi basket khulti hai, max 2 TP ke baad band. Window khatam hone par jo basket $1+ profit me ho wo turant band; loss wali basket chalti rehti hai aur $1+ profit aate hi band.</p>
+        <p>Shaant market check: pichhle 30 min me gold $5 se zyada hila ho to EA nayi basket nahi kholta.</p>
+        <p>Deep bounce: basket 8 level par pahunche to naye chhote level band; 0.20 lot ke max 2 bounce trade, side ka profit $15 par band, $4000 loss par band.</p>
+        <p class="muted">News: high-impact USD news se 30 min pehle aur 30 min baad nayi basket nahi.</p>
+      </div>
+    </div>
+    <div class="sec">
+      <span class="lbl">Backtest · 101 din, $10k, 3 candle path</span>
+      <div class="panel" style="padding:8px 10px">
+        <table>
+          <thead><tr><th>Setting</th><th>Net</th><th>Saaf</th><th>DD</th></tr></thead>
+          <tbody>
+            <tr><td>v1.04 (sirf time)</td><td class="r">−$18k / −$58k / +$24k</td><td class="r">2/8/2</td><td>100%+</td></tr>
+            <tr><td>2 TP + profit close</td><td>+$18k / −$61k / +$12k</td><td class="r">0/6/1</td><td>41–107%</td></tr>
+            <tr><td>30m &lt; $5 check</td><td class="g">+$9.7k / +$18.2k / +$12.0k</td><td class="g">0/0/0</td><td>36–62%</td></tr>
+            <tr><td><b class="gold">v1.05 (sab niyam)</b></td><td class="g">+$2.7k / +$3.6k / +$3.3k</td><td class="g">0/0/0</td><td class="g">15–35%</td></tr>
+          </tbody>
+        </table>
+        <p class="muted" style="font-size:12px;padding:8px 4px">Source: SAMU Backtest Lab, research/gold-killer (Exness XAUUSDm M1, Aug–Nov 2026). News filter backtest me nahi hai.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="pg" id="pg-set">
+    <div class="sec">
+      <span class="lbl">GitHub connection</span>
+      <div class="panel">
+        <p class="muted" style="font-size:14px" id="tokState">Token nahi juda. Bina token ke sirf dekh sakte ho (har 1 min).</p>
+        <label class="field"><span>GitHub token (fine-grained, sirf is repo ka Contents read + write)</span><input id="tokIn" type="password" autocomplete="off" placeholder="github_pat_..."></label>
+        <label class="field"><span>PIN (4–8 ank) — token isi se lock hoga</span><input id="pinIn" class="pin" type="password" inputmode="numeric" maxlength="8" placeholder="••••"></label>
+        <div class="row"><button class="gbtn" id="saveTok">Token save karo</button><button class="obtn" id="testCon">Connection jaancho</button><button class="obtn" id="forget">Token hatao</button></div>
+      </div>
+    </div>
+    <div class="sec">
+      <span class="lbl">Repo</span>
+      <div class="panel">
+        <label class="field"><span>Repo (owner/naam)</span><input id="repoIn" autocomplete="off"></label>
+        <label class="field"><span>Live branch</span><input id="brIn" autocomplete="off"></label>
+        <label class="field"><span>Kitne second me refresh</span><select id="pollIn"><option>10</option><option>15</option><option>30</option><option>60</option></select></label>
+        <div class="row"><button class="gbtn" id="saveRepo">Save karo</button></div>
+      </div>
+    </div>
+    <div class="sec">
+      <span class="lbl">Alert</span>
+      <div class="panel">
+        <div class="tog"><span>Zaroori jagah blink</span><button class="sw" data-k="blink" aria-label="Blink"></button></div>
+        <div class="tog"><span>Awaaz</span><button class="sw" data-k="sound" aria-label="Awaaz"></button></div>
+        <div class="tog"><span>Vibrate</span><button class="sw" data-k="vib" aria-label="Vibrate"></button></div>
+        <div class="tog"><span>Phone notification (app khula ho tab)</span><button class="sw" data-k="notify" aria-label="Notification"></button></div>
+      </div>
+    </div>
+    <div class="sec">
+      <span class="lbl">Ek baar ka setup</span>
+      <div class="panel">
+        <ol class="steps">
+          <li>GitHub → Settings → Developer settings → Fine-grained token → sirf <code>SAMU-GOLD-KILLER-COMMAND</code> repo → Contents: Read and write.</li>
+          <li>Wahi token yahan PIN ke saath save karo.</li>
+          <li>VPS par MT5 → Tools → Options → Expert Advisors → "Allow WebRequest" me <code>https://api.github.com</code> jodo.</li>
+          <li>EA <code>SAMU GOLD KILLER v1.05</code> chart par lagao, input <code>GitHubToken</code> me token daalo, <code>ControlMode</code> = APP.</li>
+          <li>Status upar hara "EA LIVE" dikhe to sab theek.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav><div class="in">
+  <button class="on" data-pg="cmd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>COMMAND</button>
+  <button data-pg="ana"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16M8 15l4-5 3 3 4-6"/></svg>ANALYSIS</button>
+  <button data-pg="trd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>TRADES</button>
+  <button data-pg="str"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l3 3v15H6z"/><path d="M9 11h6M9 15h6"/></svg>STRATEGY</button>
+  <button data-pg="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>SETTINGS</button>
+</div></nav>
+
+<div class="mask" id="mask"><div class="sheet" role="dialog" aria-modal="true"><h3 id="mT"></h3><div id="mB"></div><div class="row" id="mR"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<!-- ===== Pure logic (tests/logic.test.js isko alag se chalata hai) ===== -->
+<script id="logic">
+var SGK = (function () {
+  var L = {};
+  L.istMin = function (sec) { return Math.floor(((sec + 19800) % 86400 + 86400) % 86400 / 60); };
+  L.hm = function (m) { m = ((m % 1440) + 1440) % 1440; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); };
+  L.money = function (v, sign) {
+    if (v === null || v === undefined || isNaN(v)) return '—';
+    var s = Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return (v < 0 ? '−$' : (sign && v > 0 ? '+$' : '$')) + s;
+  };
+  L.kmoney = function (v) { var a = Math.abs(v), s = a >= 1000 ? (a / 1000).toFixed(1) + 'k' : a.toFixed(0); return (v < 0 ? '−$' : '$') + s; };
+  // bars: [[t,o,h,l,c],...] (t = GMT sec, purane pehle)
+  L.range = function (bars, mins, now) {
+    if (!bars || !bars.length) return null;
+    var from = now - mins * 60, hi = -1e9, lo = 1e9, n = 0;
+    for (var i = 0; i < bars.length; i++) { var b = bars[i]; if (b[0] >= from && b[0] < now) { if (b[2] > hi) hi = b[2]; if (b[3] < lo) lo = b[3]; n++; } }
+    return n ? +(hi - lo).toFixed(2) : null;
+  };
+  L.regime = function (r30) { return r30 === null || r30 === undefined ? 'all' : r30 < 5 ? 'calm' : r30 < 10 ? 'normal' : 'fast'; };
+  L.slotOf = function (istMinute) { return String(Math.floor(istMinute / 30) * 30); };
+  L.slotStats = function (hist, istMinute, reg) {
+    if (!hist || !hist.slots) return null;
+    var s = hist.slots[L.slotOf(istMinute)]; if (!s) return null;
+    var x = (reg && s[reg] && s[reg].n >= 8) ? s[reg] : s.all;
+    return x ? Object.assign({ used: (reg && s[reg] && s[reg].n >= 8) ? reg : 'all' }, x) : null;
+  };
+  // news: [[t_gmt_sec, name], ...]
+  L.newsNear = function (list, now) {
+    var next = null, recent = null;
+    (list || []).forEach(function (n) {
+      var d = (n[0] - now) / 60;
+      if (d >= 0 && (!next || n[0] < next[0])) next = n;
+      if (d < 0 && d >= -30 && (!recent || n[0] > recent[0])) recent = n;
+    });
+    return { next: next, minsTo: next ? Math.round((next[0] - now) / 60) : null, recent: recent };
+  };
+  L.slotRisk = function (x) {
+    if (!x) return 0;
+    var r = 0;
+    r += Math.min(40, x.big15 * 0.5);
+    r += Math.min(25, x.big25 * 1.2);
+    if (x.plWorst <= -1000) r += 25; else if (x.plWorst <= -300) r += 10;
+    r += Math.max(0, x.deep8 - 50) * 0.3;
+    return Math.max(0, Math.min(100, Math.round(r)));
+  };
+  // o: {online, r30, r60, spread, news:{minsTo,recent,next}, slot, maxSpread, calmLim, armed}
+  L.verdict = function (o) {
+    var R = [], red = false, yel = false, score = 0;
+    function add(ok, lvl, text) { R.push({ ok: ok, lvl: ok ? 'ok' : lvl, text: text }); if (!ok && lvl === 'no') red = true; if (!ok && lvl === 'wa') yel = true; }
+    if (!o.online) { add(false, 'no', 'EA offline — START VPS tak nahi pahunchega'); return { level: 'RED', score: 100, reasons: R, msg: 'EA offline hai' }; }
+    var lim = o.calmLim || 5;
+    if (o.r30 === null || o.r30 === undefined) add(false, 'wa', 'Pichhle 30 min ka data nahi');
+    else if (o.r30 >= 10) { add(false, 'no', 'Pichhle 30 min me gold $' + o.r30.toFixed(1) + ' hila — market tez'); score += 40; }
+    else if (o.r30 >= lim) { add(false, 'wa', 'Pichhle 30 min: $' + o.r30.toFixed(1) + ' (EA ki seema $' + lim + ') — EA basket nahi kholega'); score += 22; }
+    else add(true, 'ok', 'Pichhle 30 min: $' + o.r30.toFixed(1) + ' — shaant');
+    if (o.r60 !== null && o.r60 !== undefined) {
+      if (o.r60 >= 20) { add(false, 'no', 'Pichhle 1 ghante me $' + o.r60.toFixed(1) + ' ka move'); score += 20; }
+      else if (o.r60 >= 12) { add(false, 'wa', 'Pichhla 1 ghanta: $' + o.r60.toFixed(1)); score += 10; }
+      else add(true, 'ok', 'Pichhla 1 ghanta: $' + o.r60.toFixed(1));
+    }
+    var nw = o.news || {};
+    if (nw.recent) { add(false, 'no', 'Abhi news aayi: ' + nw.recent[1]); score += 35; }
+    else if (nw.minsTo !== null && nw.minsTo !== undefined && nw.minsTo <= 60) { add(false, 'no', 'News ' + nw.minsTo + ' min me: ' + nw.next[1]); score += 35; }
+    else if (nw.minsTo !== null && nw.minsTo !== undefined && nw.minsTo <= 120) { add(false, 'wa', 'News ' + nw.minsTo + ' min me: ' + nw.next[1]); score += 12; }
+    else add(true, 'ok', 'Agle 2 ghante koi badi news nahi');
+    var ms = o.maxSpread || 0.5;
+    if (o.spread !== null && o.spread !== undefined) {
+      if (o.spread > ms) { add(false, 'wa', 'Spread $' + o.spread.toFixed(2) + ' zyada'); score += 8; }
+      else add(true, 'ok', 'Spread $' + o.spread.toFixed(2));
+    }
+    var s = o.slot;
+    if (s) {
+      var sr = L.slotRisk(s);
+      if (s.plWorst <= -1000 || s.big25 >= 20) { add(false, 'no', 'Itihaas: isi samay ' + s.big25 + '% din $25+ move, sabse bura ' + L.kmoney(s.plWorst)); score += 25; }
+      else if (s.big15 >= 40 || s.plWorst <= -300) { add(false, 'wa', 'Itihaas: isi samay ' + s.big15 + '% din $15+ move'); score += 12; }
+      else add(true, 'ok', 'Itihaas: isi samay ' + s.win + '% START plus me');
+      score += Math.round(sr * 0.15);
+    }
+    score = Math.max(0, Math.min(100, score));
+    var level = red ? 'RED' : yel ? 'YELLOW' : 'GREEN';
+    var msg = level === 'GREEN' ? 'Market shaant — START theek' : level === 'YELLOW' ? 'Dhyan se — chhoti window rakho' : 'Abhi START mat dabao';
+    return { level: level, score: score, reasons: R, msg: msg };
+  };
+  L.cmd = function (kind, extra, nowMs) {
+    var c = { v: 1, id: nowMs, cmd: kind, ts: Math.floor(nowMs / 1000), by: 'app' };
+    for (var k in (extra || {})) c[k] = extra[k];
+    return c;
+  };
+  L.b64 = function (s) { return btoa(unescape(encodeURIComponent(s))); };
+  L.unb64 = function (s) { return decodeURIComponent(escape(atob(String(s).replace(/\s/g, '')))); };
+  return L;
+})();
+if (typeof module !== 'undefined') module.exports = SGK;
+</script>
+
+<script>
+(function () {
+'use strict';
+var APP_VERSION = '1.0.0';
+var $ = function (id) { return document.getElementById(id); };
+var L = SGK;
+document.getElementById('ver').textContent = 'v' + APP_VERSION;
+
+// ---------- config ----------
+var DEF = { repo: 'ankushchhajed7-cmd/SAMU-GOLD-KILLER-COMMAND', branch: 'live', poll: 15, blink: true, sound: true, vib: true, notify: false, win: 60, maxTP: 2 };
+var cfg = Object.assign({}, DEF);
+try { Object.assign(cfg, JSON.parse(localStorage.getItem('sgkc_cfg') || '{}')); } catch (e) {}
+function saveCfg() { try { localStorage.setItem('sgkc_cfg', JSON.stringify(cfg)); } catch (e) {} }
+var token = null;
+var S = { status: null, control: null, news: null, hist: null, ok: false, err: '', lastOk: 0, pending: null, alerts: {} };
+try { S.log = JSON.parse(localStorage.getItem('sgkc_log') || '[]'); } catch (e) { S.log = []; }
+
+// ---------- ui helpers ----------
+function toast(t) { var el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(function () { el.classList.remove('on'); }, 2600); }
+function modal(title, html, buttons) {
+  $('mT').textContent = title; $('mB').innerHTML = html; var r = $('mR'); r.innerHTML = '';
+  (buttons || [{ t: 'Theek hai', c: 'gbtn' }]).forEach(function (b) {
+    var el = document.createElement('button'); el.className = b.c || 'obtn'; el.textContent = b.t;
+    el.onclick = function () { if (!b.keep) $('mask').classList.remove('on'); if (b.f) b.f(); }; r.appendChild(el);
+  });
+  $('mask').classList.add('on');
+}
+$('mask').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('on'); });
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+var actx = null;
+function beep(f, ms) {
+  if (!cfg.sound) return;
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); var o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = f || 880; o.connect(g); g.connect(actx.destination); g.gain.setValueAtTime(.16, actx.currentTime); g.gain.exponentialRampToValueAtTime(.001, actx.currentTime + (ms || 220) / 1000); o.start(); o.stop(actx.currentTime + (ms || 220) / 1000); } catch (e) {}
+}
+function vib(p) { if (cfg.vib && navigator.vibrate) navigator.vibrate(p || 120); }
+function alertOnce(key, title, body, tone) {
+  if (S.alerts[key]) return; S.alerts[key] = Date.now();
+  beep(tone || 660, 300); vib([120, 80, 120]);
+  if (cfg.notify && 'Notification' in window && Notification.permission === 'granted') { try { new Notification(title, { body: body, icon: 'icons/icon-192.png', tag: key }); } catch (e) {} }
+}
+function clearAlert(key) { delete S.alerts[key]; }
+
+// ---------- tabs ----------
+document.querySelectorAll('nav button').forEach(function (b) {
+  b.onclick = function () {
+    document.querySelectorAll('nav button').forEach(function (x) { x.classList.toggle('on', x === b); });
+    document.querySelectorAll('.pg').forEach(function (p) { p.classList.toggle('on', p.id === 'pg-' + b.dataset.pg); });
+    window.scrollTo(0, 0); if (b.dataset.pg === 'ana') drawChart();
+  };
+});
+
+// ---------- refresh (cache saaf, naya version, data safe) ----------
+$('refresh').onclick = function () {
+  this.classList.add('spin');
+  var jobs = [];
+  if ('caches' in window) jobs.push(caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }));
+  if (navigator.serviceWorker) jobs.push(navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); }));
+  Promise.all(jobs).finally(function () { location.replace(location.pathname + '?v=' + Date.now()); });
+};
+
+// ---------- token (PIN se AES-GCM lock) ----------
+var enc = new TextEncoder(), dec = new TextDecoder();
+function b2a(b) { return btoa(String.fromCharCode.apply(null, new Uint8Array(b))); }
+function a2b(s) { return Uint8Array.from(atob(s), function (c) { return c.charCodeAt(0); }); }
+function keyFrom(pin, salt) {
+  return crypto.subtle.importKey('raw', enc.encode(pin), 'PBKDF2', false, ['deriveKey']).then(function (k) {
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: salt, iterations: 150000, hash: 'SHA-256' }, k, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  });
+}
+function lockToken(tok, pin) {
+  var salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  return keyFrom(pin, salt).then(function (k) { return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, k, enc.encode(tok)); })
+    .then(function (ct) { localStorage.setItem('sgkc_tok', JSON.stringify({ s: b2a(salt), i: b2a(iv), c: b2a(ct) })); });
+}
+function unlockToken(pin) {
+  var o = JSON.parse(localStorage.getItem('sgkc_tok') || 'null'); if (!o) return Promise.reject(new Error('none'));
+  return keyFrom(pin, a2b(o.s)).then(function (k) { return crypto.subtle.decrypt({ name: 'AES-GCM', iv: a2b(o.i) }, k, a2b(o.c)); }).then(function (p) { return dec.decode(p); });
+}
+function askPin() {
+  if (!localStorage.getItem('sgkc_tok')) return;
+  modal('PIN daalo', '<p>Token khulega aur buttons chalu honge.</p><input id="pinAsk" class="pin" type="password" inputmode="numeric" maxlength="8" style="width:100%;height:52px;background:#0c0a07;border:1px solid #5a4728;border-radius:10px;color:#f4ead5" autofocus>', [
+    { t: 'Sirf dekhna', c: 'obtn' },
+    { t: 'Kholo', c: 'gbtn', keep: true, f: function () {
+      unlockToken($('pinAsk').value).then(function (t) { token = t; $('mask').classList.remove('on'); toast('Token khul gaya'); tick(true); updTok(); })
+        .catch(function () { toast('PIN galat'); vib(200); });
+    } }
+  ]);
+  setTimeout(function () { var p = $('pinAsk'); if (p) { p.focus(); p.onkeydown = function (e) { if (e.key === 'Enter') $('mR').lastChild.click(); }; } }, 60);
+}
+function updTok() {
+  var has = !!localStorage.getItem('sgkc_tok');
+  $('tokState').textContent = token ? 'Token juda hai aur khula hai. Buttons chalu.' : has ? 'Token save hai par band hai — app kholte samay PIN daalo.' : 'Token nahi juda. Bina token ke sirf dekh sakte ho (har 1 min).';
+}
+$('saveTok').onclick = function () {
+  var t = $('tokIn').value.trim(), p = $('pinIn').value.trim();
+  if (t.length < 20) return toast('Token poora daalo');
+  if (!/^\d{4,8}$/.test(p)) return toast('PIN 4–8 ank ka');
+  lockToken(t, p).then(function () { token = t; $('tokIn').value = ''; $('pinIn').value = ''; toast('Token lock karke save hua'); updTok(); tick(true); });
+};
+$('forget').onclick = function () { modal('Token hatayein?', '<p>Is phone se token mit jayega. Buttons band, sirf dekhna chalega.</p>', [{ t: 'Nahi' }, { t: 'Hatao', c: 'gbtn', f: function () { localStorage.removeItem('sgkc_tok'); token = null; updTok(); toast('Token hata diya'); } }]); };
+$('testCon').onclick = function () {
+  toast('Jaanch rahe hain…');
+  fetch('https://api.github.com/repos/' + cfg.repo, { headers: hdr() }).then(function (r) { return r.json().then(function (j) { return { r: r, j: j }; }); }).then(function (x) {
+    if (!x.r.ok) return modal('Connection fail', '<p>GitHub ne mana kiya: ' + esc(x.j.message || x.r.status) + '</p>');
+    var w = x.j.permissions && x.j.permissions.push;
+    modal('Connection theek', '<p>Repo: <b>' + esc(x.j.full_name) + '</b></p><p>Likhne ki ijazat: <b class="' + (w ? 'g' : 'r') + '">' + (w ? 'Haan' : 'Nahi (sirf dekhna)') + '</b></p><p class="muted">API limit bacha: ' + (x.r.headers.get('x-ratelimit-remaining') || '?') + '</p>');
+  }).catch(function (e) { modal('Internet nahi', '<p>' + esc(e.message) + '</p>'); });
+};
+
+// ---------- repo / alert settings ----------
+$('repoIn').value = cfg.repo; $('brIn').value = cfg.branch; $('pollIn').value = String(cfg.poll);
+$('saveRepo').onclick = function () { cfg.repo = $('repoIn').value.trim() || DEF.repo; cfg.branch = $('brIn').value.trim() || 'live'; cfg.poll = +$('pollIn').value || 15; saveCfg(); toast('Save hua'); tick(true); };
+document.querySelectorAll('.sw').forEach(function (b) {
+  var k = b.dataset.k; b.classList.toggle('on', !!cfg[k]);
+  b.onclick = function () {
+    cfg[k] = !cfg[k]; b.classList.toggle('on', cfg[k]); saveCfg(); applyBlink();
+    if (k === 'notify' && cfg.notify && 'Notification' in window) Notification.requestPermission();
+    if (k === 'sound' && cfg.sound) beep(990, 120);
+  };
+});
+function applyBlink() { document.body.classList.toggle('blinkon', !!cfg.blink); }
+applyBlink();
+
+// ---------- chips ----------
+function chips(id, key) {
+  var set = $(id);
+  set.querySelectorAll('.chip').forEach(function (c) {
+    c.classList.toggle('on', +c.dataset.v === cfg[key]);
+    c.onclick = function () { cfg[key] = +c.dataset.v; saveCfg(); set.querySelectorAll('.chip').forEach(function (x) { x.classList.toggle('on', x === c); }); };
+  });
+}
+chips('winSet', 'win'); chips('tpSet', 'maxTP');
+
+// ---------- GitHub ----------
+function hdr(raw) { var h = { 'Accept': raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }; if (token) h.Authorization = 'Bearer ' + token; return h; }
+function url(path) { return 'https://api.github.com/repos/' + cfg.repo + '/contents/' + path + '?ref=' + encodeURIComponent(cfg.branch); }
+function ghRead(path) {
+  return fetch(url(path) + '&_=' + Date.now(), { headers: hdr(true), cache: 'no-store' }).then(function (r) {
+    if (r.status === 404) return null;
+    if (!r.ok) throw new Error(r.status === 401 ? 'Token galat ya expire' : r.status === 403 ? 'GitHub limit / ijazat nahi' : 'GitHub ' + r.status);
+    return r.text().then(function (t) { try { return JSON.parse(t); } catch (e) { return null; } });
+  });
+}
+function ghWrite(path, obj, msg) {
+  if (!token) return Promise.reject(new Error('Token band hai — PIN se kholo'));
+  return fetch(url(path) + '&_=' + Date.now(), { headers: hdr(false), cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (cur) {
+    var body = { message: msg, content: L.b64(JSON.stringify(obj, null, 1)), branch: cfg.branch };
+    if (cur && cur.sha) body.sha = cur.sha;
+    return fetch('https://api.github.com/repos/' + cfg.repo + '/contents/' + path, { method: 'PUT', headers: Object.assign(hdr(false), { 'Content-Type': 'application/json' }), body: JSON.stringify(body) });
+  }).then(function (r) { if (!r.ok) return r.json().then(function (j) { throw new Error(j.message || ('GitHub ' + r.status)); }); return r.json(); });
+}
+
+// ---------- commands ----------
+function addLog(text, cls) { S.log.unshift({ t: Date.now(), x: text, c: cls || '' }); S.log = S.log.slice(0, 30); try { localStorage.setItem('sgkc_log', JSON.stringify(S.log)); } catch (e) {} renderLog(); }
+function renderLog() {
+  var ul = $('log');
+  if (!S.log.length) { ul.innerHTML = '<li class="muted">Abhi koi command nahi</li>'; return; }
+  ul.innerHTML = S.log.slice(0, 10).map(function (l) { var d = new Date(l.t); return '<li><time>' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + '</time><span class="' + l.c + '">' + esc(l.x) + '</span></li>'; }).join('');
+}
+function send(kind, extra, label) {
+  if (!token) { if (localStorage.getItem('sgkc_tok')) askPin(); else modal('Token chahiye', '<p>Button chalane ke liye Settings me GitHub token save karo.</p>'); return; }
+  if (S.pending && Date.now() - S.pending.at < 90000) { modal('Pichhla command abhi chal raha hai', '<p>EA ne <b>' + esc(S.pending.cmd) + '</b> ka jawab abhi nahi diya. 15–60 second ruko.</p>', [{ t: 'Ruko' }, { t: 'Phir bhi bhejo', c: 'gbtn', f: function () { S.pending = null; send(kind, extra, label); } }]); return; }
+  var c = L.cmd(kind, extra, Date.now());
+  addLog(label + ' bheja…', 'gold');
+  ghWrite('control.json', c, 'app: ' + kind).then(function () {
+    S.pending = { id: c.id, cmd: kind, at: Date.now() }; S.control = c; toast(label + ' bhej diya — EA ka jawab aane do'); beep(880, 120); vib(60); render();
+  }).catch(function (e) { addLog(label + ' fail: ' + e.message, 'r'); modal('Command nahi gaya', '<p>' + esc(e.message) + '</p>'); });
+}
+$('startBtn').onclick = function () {
+  var st = S.status;
+  if (st && st.armed) return send('STOP', {}, 'STOP');
+  var v = S.verdict || { level: 'RED', msg: 'Data nahi' };
+  var go = function () { send('START', { win: cfg.win, maxTP: cfg.maxTP, verdict: v.level, score: v.score }, 'START ' + cfg.win + 'm · ' + cfg.maxTP + ' TP'); };
+  var body = '<p>Window <b>' + cfg.win + ' min</b> · Max <b>' + cfg.maxTP + ' TP</b></p><p>Jaanch: <b class="' + (v.level === 'GREEN' ? 'g' : v.level === 'YELLOW' ? 'a' : 'r') + '">' + v.level + '</b> — ' + esc(v.msg) + '</p>';
+  if (v.level === 'RED') body += '<p class="r blink"><b>Risk zyada hai. Phir bhi START?</b></p>';
+  modal(v.level === 'GREEN' ? 'START karein?' : 'Dhyan se', body, [{ t: 'Ruko' }, { t: v.level === 'RED' ? 'Phir bhi START' : 'START', c: 'gbtn', f: go }]);
+};
+$('stopBtn').onclick = function () { send('STOP', {}, 'STOP'); };
+function hold(btn, kind, label) {
+  var h = null, bar = btn.querySelector('.hold'), t0 = 0;
+  function down(e) { e.preventDefault(); t0 = Date.now(); bar.style.transition = 'width 1.5s linear'; bar.style.width = '100%'; h = setTimeout(function () { h = null; bar.style.transition = 'none'; bar.style.width = '0'; vib([60, 40, 60]); send(kind, {}, label); }, 1500); }
+  function up() { if (h) { clearTimeout(h); h = null; if (Date.now() - t0 < 1500) toast('1.5 second daba ke rakho'); } bar.style.transition = 'none'; bar.style.width = '0'; }
+  btn.addEventListener('pointerdown', down); btn.addEventListener('pointerup', up); btn.addEventListener('pointerleave', up); btn.addEventListener('pointercancel', up);
+  btn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+}
+hold($('cBuy'), 'CLOSE_BUY', 'CLOSE BUY'); hold($('cSell'), 'CLOSE_SELL', 'CLOSE SELL'); hold($('cAll'), 'CLOSE_ALL', 'CLOSE ALL');
+
+// ---------- data poll ----------
+var busy = false, lastTick = 0, DEMO = /[?&]demo/.test(location.search);
+function tick(force) {
+  if (DEMO) {
+    if (busy || (!force && Date.now() - lastTick < 15000)) return; busy = true; lastTick = Date.now();
+    fetch('data/demo-status.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+      var sh = nowSec() - j.t; j.t += sh; j.armEnd = j.armEnd ? j.armEnd + sh : 0; j.bars.forEach(function (b) { b[0] += sh; }); j.news.list.forEach(function (n) { n[0] += sh; });
+      S.status = j; S.ok = true; S.err = '';
+    }).finally(function () { busy = false; render(); });
+    return;
+  }
+  var gap = (token ? cfg.poll : 60) * 1000;
+  if (busy || (!force && Date.now() - lastTick < gap)) return;
+  busy = true; lastTick = Date.now();
+  Promise.all([ghRead('status.json'), ghRead('control.json'), (!S.news || Date.now() - S.newsAt > 600000) ? ghRead('news.json') : Promise.resolve(S.news)])
+    .then(function (a) { S.status = a[0]; S.control = a[1] || S.control; if (a[2]) { S.news = a[2]; S.newsAt = Date.now(); } S.ok = true; S.err = ''; S.lastOk = Date.now(); })
+    .catch(function (e) { S.ok = false; S.err = e.message; })
+    .finally(function () { busy = false; render(); });
+}
+fetch('data/history.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (j) { S.hist = j; render(); buildHeat(); }).catch(function () {});
+
+// ---------- render ----------
+function nowSec() { return Math.floor(Date.now() / 1000); }
+function online() { return !!(S.status && S.status.t && nowSec() - S.status.t < 120); }
+function newsList() {
+  var st = S.status, a = [];
+  if (st && st.news && st.news.list && online()) a = st.news.list;
+  else if (S.news && S.news.list) a = S.news.list;
+  return a;
+}
+function render() {
+  var st = S.status, on = online(), now = nowSec();
+  // clock
+  var ist = L.istMin(now), d = new Date((now + 19800) * 1000);
+  $('clk').textContent = L.hm(ist);
+  $('clkd').textContent = 'IST · ' + ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][d.getUTCDay()] + ' ' + d.getUTCDate();
+  // live
+  var dot = $('liveDot');
+  dot.className = 'dot ' + (on ? 'on' : (st ? 'off blink' : ''));
+  if (!S.ok && S.err) { $('liveTxt').textContent = 'GitHub se nahi juda'; $('liveSub').textContent = S.err; }
+  else if (on) { $('liveTxt').innerHTML = '<span class="g">EA LIVE</span> · ' + esc(st.sym || '') + ' · ' + esc(st.acc || ''); $('liveSub').textContent = 'v' + (st.ea || '?') + ' · ' + (now - st.t) + ' sec pehle · ' + (token ? 'buttons chalu' : 'sirf dekhna'); }
+  else if (st) { $('liveTxt').innerHTML = '<span class="r blink">EA OFFLINE</span>'; $('liveSub').textContent = 'Aakhri khabar ' + Math.round((now - st.t) / 60) + ' min pehle — VPS / MT5 dekho'; }
+  else { $('liveTxt').textContent = 'EA ka status nahi mila'; $('liveSub').textContent = token ? 'EA v1.05 chart par lagao' : 'Settings me token daalo'; }
+  if (st && !on) alertOnce('off', 'EA OFFLINE', 'VPS / MT5 dekho', 330); else clearAlert('off');
+
+  // analysis inputs
+  var bars = st && st.bars || [];
+  var lastT = bars.length ? bars[bars.length - 1][0] + 60 : now;
+  var r30 = L.range(bars, 30, lastT), r60 = L.range(bars, 60, lastT);
+  var reg = L.regime(r30);
+  var slot = L.slotStats(S.hist, ist, reg);
+  var nn = L.newsNear(newsList(), now);
+  var v = L.verdict({ online: on, r30: r30, r60: r60, spread: st ? st.sp : null, news: nn, slot: slot, calmLim: st && st.calm ? st.calm.lim : 5 });
+  S.verdict = v; S.r30 = r30;
+
+  // vault ring
+  var arc = $('arc'), C = 2 * Math.PI * 128, f = on ? Math.max(.04, 1 - v.score / 100) : 0;
+  arc.setAttribute('stroke-dasharray', (C * f).toFixed(1) + ' ' + C.toFixed(1));
+  arc.style.stroke = v.level === 'GREEN' ? '#35e39a' : v.level === 'YELLOW' ? '#ffb547' : '#ff5252';
+  var vd = $('verdict'); vd.textContent = on ? v.level : '—'; vd.className = 'v ' + (v.level === 'GREEN' ? 'g' : v.level === 'YELLOW' ? 'a' : 'r blink');
+  if (!on) vd.className = 'v muted';
+  $('verdictMsg').textContent = !on ? 'EA ka live data nahi' : (st.armed ? 'START chalu · market abhi ' + v.level + ' · risk ' + v.score + '/100' : v.msg + ' · risk ' + v.score + '/100');
+
+  // core button
+  var core = $('startBtn');
+  if (st && st.armed && on) {
+    var left = Math.max(0, (st.armEnd || 0) - now);
+    core.classList.add('armed');
+    $('coreBig').textContent = String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0');
+    $('coreSub').textContent = 'TP ' + (st.tpDone || 0) + '/' + (st.maxTP || 0) + ' · DABAO = STOP';
+  } else {
+    core.classList.remove('armed');
+    $('coreBig').textContent = 'START';
+    $('coreSub').textContent = token ? (cfg.win + ' MIN · ' + cfg.maxTP + ' TP') : 'TOKEN CHAHIYE';
+  }
+  core.classList.toggle('glow', on && !(st && st.armed) && v.level === 'GREEN');
+  core.style.color = '';
+
+  // banner
+  var bt = 'SETUP', bm = 'Pehle Settings me GitHub token jodo.', bc = 'bn-a', blink = false;
+  if (st) {
+    bt = st.banner && st.banner.t || 'STATUS'; bm = st.banner && st.banner.m || ''; var k = st.banner && st.banner.k || 'a';
+    bc = k === 'g' ? 'bn-g' : k === 'r' ? 'bn-r' : 'bn-a'; blink = k === 'r';
+    if (!on) { bt = 'OFFLINE'; bm = 'EA ka status ' + Math.round((now - st.t) / 60) + ' min se nahi aaya. VPS, MT5 aur WebRequest dekho.'; bc = 'bn-r'; blink = true; }
+  } else if (token || localStorage.getItem('sgkc_tok')) { bt = 'INTEZAAR'; bm = 'EA v1.05 VPS par chart par lagao — status yahan dikhega.'; }
+  var ban = $('banner'); ban.className = 'banner ' + bc + (blink ? ' glow' : '');
+  $('banT').textContent = bt; $('banT').className = blink ? 'blink' : ''; $('banM').textContent = bm;
+  if (st && st.banner && st.banner.k === 'r' && on) alertOnce('ban_' + st.banner.t, 'SAMU GOLD KILLER: ' + st.banner.t, st.banner.m, 440); else clearAlert('ban_' + (st && st.banner ? st.banner.t : ''));
+
+  // account
+  if (st) {
+    $('eq').textContent = L.money(st.eq);
+    $('eqsub').innerHTML = 'Balance ' + L.money(st.bal) + ' · Floating <span class="' + (st.fl >= 0 ? 'g' : 'r') + '">' + L.money(st.fl, true) + '</span>';
+    var td = st.today || {};
+    $('today').textContent = L.money(td.pl || 0, true); $('today').className = 'num ' + ((td.pl || 0) >= 0 ? 'g' : 'r');
+    $('todayc').textContent = (td.cyc || 0) + ' baskets · sabse bura ' + L.money(td.worst || 0);
+    side('b', st.buy, st.tp || 30, st.deep && st.deep.buy);
+    side('s', st.sell, st.tp || 30, st.deep && st.deep.sell);
+  }
+  // pending ack
+  if (S.pending && st && st.lastCmd && +st.lastCmd.id === +S.pending.id) {
+    var ok = !/^(ignored|fail|purana|expired|band)/i.test(st.lastCmd.res || '');
+    addLog('EA: ' + S.pending.cmd + ' → ' + (st.lastCmd.res || 'OK'), ok ? 'g' : 'r');
+    if (ok) beep(1180, 160); else alertOnce('nack' + S.pending.id, 'EA ne mana kiya', st.lastCmd.res, 300);
+    S.pending = null;
+  }
+  ['startBtn', 'stopBtn', 'cBuy', 'cSell', 'cAll'].forEach(function (id) { $(id).toggleAttribute('disabled', false); });
+  $('stopBtn').disabled = !(st && st.armed);
+
+  renderAnalysis(st, bars, r30, r60, slot, reg, nn, v, now);
+  renderTrades(st);
+}
+function side(p, x, tp, deep) {
+  x = x || { n: 0, lots: 0, pl: 0 };
+  var pl = $(p + 'Pl'); pl.textContent = x.n ? L.money(x.pl, true) : '—'; pl.className = 'pl num ' + (x.pl >= 0 ? 'g' : 'r');
+  $(p + 'Bar').style.width = (x.n ? Math.max(0, Math.min(1, x.pl / tp)) * 100 : 0) + '%';
+  $(p + 'Meta').textContent = x.n ? (x.n + ' trade · ' + (+x.lots).toFixed(2) + ' lot · avg ' + (x.avg ? (+x.avg).toFixed(2) : '—')) : ('Next ' + (x.next ? (+x.next).toFixed(2) : '—'));
+  var lv = $(p + 'Lv'); lv.textContent = deep ? 'DEEP L' + x.n : 'L' + x.n;
+  lv.className = 'lvl' + (x.n >= 8 ? ' deep blink' : '');
+  if (x.n >= 8) alertOnce('deep' + p, (p === 'b' ? 'BUY' : 'SELL') + ' basket L' + x.n, 'Basket gehri ho gayi — dhyan do', 520); else clearAlert('deep' + p);
+}
+function renderAnalysis(st, bars, r30, r60, slot, reg, nn, v, now) {
+  // checks
+  var ck = $('checks');
+  if (v.reasons.length) ck.innerHTML = v.reasons.map(function (r) { return '<div class="kv"><span class="t"><span class="ck ' + r.lvl + '">' + (r.ok ? '✓' : r.lvl === 'no' ? '✕' : '!') + '</span>' + esc(r.text) + '</span></div>'; }).join('');
+  // forecast
+  var regName = { calm: 'shaant (< $5)', normal: 'normal ($5–10)', fast: 'tez (> $10)', all: 'sab tarah' };
+  if (slot) {
+    $('fcTitle').textContent = 'IST ' + L.hm(Math.floor(L.istMin(now) / 30) * 30) + ' wale slot me, ' + regName[slot.used] + ' market me START (' + (S.hist && S.hist.source ? S.hist.source : '') + ')';
+    $('fcMv').textContent = '$' + slot.mv50 + '–' + slot.mv90;
+    $('fcBig').textContent = slot.big15 + '%'; $('fcBig').className = 'num ' + (slot.big15 >= 40 ? 'r' : slot.big15 >= 25 ? 'a' : 'g');
+    $('fcWin').textContent = slot.win + '%'; $('fcWin').className = 'num ' + (slot.win >= 95 ? 'g' : 'a');
+    $('fcDeep').textContent = slot.deep8 + '%';
+    $('fcWorst').textContent = L.kmoney(slot.plWorst); $('fcWorst').className = 'num ' + (slot.plWorst <= -1000 ? 'r blink' : slot.plWorst < 0 ? 'a' : 'g');
+    $('fcN').textContent = slot.n;
+  }
+  // news
+  var list = newsList().filter(function (n) { return n[0] > now - 1800 && n[0] < now + 86400; }).sort(function (a, b) { return a[0] - b[0]; });
+  var nl = $('newsList');
+  if (!list.length) nl.innerHTML = '<div class="empty">Agle 24 ghante koi high-impact USD news nahi' + (S.news && S.news.made ? ' (list: ' + esc(S.news.made) + ')' : '') + '</div>';
+  else nl.innerHTML = list.slice(0, 12).map(function (n) {
+    var m = Math.round((n[0] - now) / 60), soon = m >= -30 && m <= 60;
+    var when = m < 0 ? (-m + ' min pehle') : m < 60 ? (m + ' min me') : (Math.floor(m / 60) + 'h ' + (m % 60) + 'm me');
+    return '<div class="kv"><span' + (soon ? ' class="r blink"' : '') + '><b>' + L.hm(L.istMin(n[0])) + '</b> · ' + esc(n[1]) + '</span><b class="' + (soon ? 'r' : 'muted') + '">' + when + '</b></div>';
+  }).join('');
+  if (nn.minsTo !== null && nn.minsTo <= 15) alertOnce('news' + nn.next[0], 'News ' + nn.minsTo + ' min me', nn.next[1], 600);
+  $('lastPx').textContent = st && st.bid ? ('Bid ' + (+st.bid).toFixed(2) + ' · spread $' + (+st.sp).toFixed(2)) : '';
+  if ($('pg-ana').classList.contains('on')) drawChart();
+}
+function renderTrades(st) {
+  var tb = $('trades');
+  var tr = st && st.trades || [];
+  tb.innerHTML = tr.length ? tr.map(function (t) {
+    return '<tr><td class="' + (t[0] === 'B' ? 'g' : 'r') + '"><b>' + (t[0] === 'B' ? 'BUY' : 'SELL') + '</b></td><td>' + (+t[1]).toFixed(2) + '</td><td>' + (+t[2]).toFixed(2) + '</td><td class="muted">' + esc(t[3]) + '</td><td class="' + (t[4] >= 0 ? 'g' : 'r') + '">' + L.money(t[4], true) + '</td></tr>';
+  }).join('') : '<tr><td colspan="5" class="empty">Koi khula trade nahi</td></tr>';
+  var kv = $('eaKv');
+  if (!st) { kv.innerHTML = '<div class="empty">EA offline</div>'; return; }
+  var rows = [
+    ['Mode', st.mode === 'APP' ? 'App se START' : 'Fixed time (v1.04 jaisa)'],
+    ['START', st.armed ? '<span class="g">Chalu</span> · ' + L.hm(L.istMin(st.armEnd || 0)) + ' IST tak' : 'Band'],
+    ['TP is START me', (st.tpDone || 0) + ' / ' + (st.maxTP || 0)],
+    ['Window ke baad band', st.endClose !== undefined ? 'Profit ≥ ' + L.money(st.endClose) : '—'],
+    ['Shaant check', st.calm ? ('30 min range $' + (+st.calm.r30).toFixed(1) + ' / seema $' + st.calm.lim + ' · ' + (st.calm.ok ? '<span class="g">theek</span>' : '<span class="a">ruka</span>')) : '—'],
+    ['News', esc(st.news && st.news.text || '—')],
+    ['Spread', '$' + (+st.sp || 0).toFixed(2)],
+    ['Basket TP', L.money(st.tp || 30)],
+    ['Aakhri command', st.lastCmd ? esc((st.lastCmd.cmd || '') + ' → ' + (st.lastCmd.res || '')) : '—'],
+    ['Server', esc((st.srv || '') + ' · ' + (st.acc || ''))]
+  ];
+  kv.innerHTML = rows.map(function (r) { return '<div class="kv"><span class="muted">' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('');
+}
+
+// ---------- chart ----------
+function drawChart() {
+  var cv = $('chart'), st = S.status, bars = st && st.bars || [];
+  var dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+  if (!w) return;
+  cv.width = w * dpr; cv.height = h * dpr; var g = cv.getContext('2d'); g.scale(dpr, dpr); g.clearRect(0, 0, w, h);
+  if (!bars.length) { g.fillStyle = '#6f6552'; g.font = '14px Hind, sans-serif'; g.textAlign = 'center'; g.fillText('EA ka live chart data nahi', w / 2, h / 2); return; }
+  var hi = -1e9, lo = 1e9; bars.forEach(function (b) { hi = Math.max(hi, b[2]); lo = Math.min(lo, b[3]); });
+  var pad = (hi - lo) * .08 || 1; hi += pad; lo -= pad;
+  var right = 46, cw = (w - right) / bars.length, y = function (p) { return (hi - p) / (hi - lo) * (h - 10) + 5; };
+  // grid
+  g.strokeStyle = '#221c12'; g.lineWidth = 1; g.fillStyle = '#6f6552'; g.font = '10px Hind, sans-serif'; g.textAlign = 'left';
+  for (var k = 0; k <= 4; k++) { var p = lo + (hi - lo) * k / 4, yy = y(p); g.beginPath(); g.moveTo(0, yy); g.lineTo(w - right, yy); g.stroke(); g.fillText(p.toFixed(1), w - right + 4, yy + 3); }
+  // 30 min band
+  var lastT = bars[bars.length - 1][0] + 60, from = lastT - 1800, bh = -1e9, bl = 1e9, i0 = bars.length;
+  bars.forEach(function (b, i) { if (b[0] >= from) { bh = Math.max(bh, b[2]); bl = Math.min(bl, b[3]); i0 = Math.min(i0, i); } });
+  if (i0 < bars.length) { g.fillStyle = 'rgba(217,180,90,.12)'; g.fillRect(i0 * cw, y(bh), (bars.length - i0) * cw, y(bl) - y(bh)); g.strokeStyle = 'rgba(217,180,90,.5)'; g.setLineDash([4, 4]); g.strokeRect(i0 * cw, y(bh), (bars.length - i0) * cw, y(bl) - y(bh)); g.setLineDash([]); }
+  // candles
+  bars.forEach(function (b, i) {
+    var x = i * cw + cw / 2, up = b[4] >= b[1]; g.strokeStyle = g.fillStyle = up ? '#35e39a' : '#ff5252';
+    g.beginPath(); g.moveTo(x, y(b[2])); g.lineTo(x, y(b[3])); g.stroke();
+    var top = y(Math.max(b[1], b[4])), bot = y(Math.min(b[1], b[4])); g.fillRect(x - Math.max(1, cw * .35), top, Math.max(2, cw * .7), Math.max(1, bot - top));
+  });
+  // last price
+  var last = bars[bars.length - 1][4]; g.strokeStyle = '#f6dc8f'; g.setLineDash([2, 3]); g.beginPath(); g.moveTo(0, y(last)); g.lineTo(w - right, y(last)); g.stroke(); g.setLineDash([]);
+  g.fillStyle = '#f6dc8f'; g.fillRect(w - right, y(last) - 8, right, 16); g.fillStyle = '#1c1205'; g.font = '600 10px Hind, sans-serif'; g.fillText(last.toFixed(1), w - right + 4, y(last) + 4);
+}
+window.addEventListener('resize', function () { if ($('pg-ana').classList.contains('on')) drawChart(); });
+
+// ---------- heatmap ----------
+function riskColor(r) { return r < 25 ? '#35e39a' : r < 50 ? '#ffb547' : '#ff5252'; }
+function buildHeat() {
+  if (!S.hist) return;
+  var box = $('heat'), html = '', now = L.istMin(nowSec());
+  var ses = function (m) { return (m >= 540 && m < 630) || m >= 1350 || m < 30; };
+  for (var m = 0; m < 1440; m += 30) {
+    var x = S.hist.slots[String(m)] && S.hist.slots[String(m)].all, r = L.slotRisk(x);
+    var cur = Math.floor(now / 30) * 30 === m;
+    html += '<button data-m="' + m + '" style="background:' + (x ? riskColor(r) : '#2a2318') + ';opacity:' + (x ? .9 : .4) + '" class="' + (cur ? 'now ' : '') + (ses(m) ? 'ses' : '') + '" aria-label="' + L.hm(m) + ' risk ' + r + '">' + (m % 60 === 0 ? String(m / 60) : '') + '</button>';
+  }
+  box.innerHTML = html;
+  box.querySelectorAll('button').forEach(function (b) {
+    b.onclick = function () {
+      var m = +b.dataset.m, x = S.hist.slots[String(m)].all;
+      if (!x) return;
+      $('heatInfo').innerHTML = '<b>' + L.hm(m) + '–' + L.hm(m + 30) + ' IST</b> · aam move $' + x.mv50 + '–' + x.mv90 + ' · $15+ move ' + x.big15 + '% din · START plus ' + x.win + '% · sabse bura <span class="' + (x.plWorst <= -1000 ? 'r' : '') + '">' + L.kmoney(x.plWorst) + '</span> · risk ' + L.slotRisk(x) + '/100';
+    };
+  });
+}
+
+// ---------- vault ticks ----------
+(function () { var g = $('ticks'), h = ''; for (var i = 0; i < 60; i++) { var a = i / 60 * 2 * Math.PI - Math.PI / 2, r1 = i % 5 ? 142 : 137, r2 = 147; h += '<line x1="' + (160 + r1 * Math.cos(a)).toFixed(1) + '" y1="' + (160 + r1 * Math.sin(a)).toFixed(1) + '" x2="' + (160 + r2 * Math.cos(a)).toFixed(1) + '" y2="' + (160 + r2 * Math.sin(a)).toFixed(1) + '" stroke="' + (i % 5 ? '#3a2f1e' : '#8c6e2f') + '" stroke-width="' + (i % 5 ? 1 : 2) + '"/>'; } g.innerHTML = h; })();
+
+// ---------- start ----------
+renderLog(); updTok(); render();
+if (localStorage.getItem('sgkc_tok')) askPin();
+tick(true);
+setInterval(function () { tick(false); render(); }, 1000);
+setInterval(buildHeat, 60000);
+document.addEventListener('visibilitychange', function () { if (!document.hidden) tick(true); });
+var pgq = (location.search.match(/[?&]pg=(\w+)/) || [])[1]; if (pgq) { var nb = document.querySelector('nav button[data-pg="' + pgq + '"]'); if (nb) nb.click(); }
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+})();
+</script>
+</body>
+</html>
