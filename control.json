@@ -1,11 +1,11 @@
 {
  "v": 1,
- "id": 1795628152471,
+ "id": 1795679265665,
  "cmd": "START",
- "ts": 1795628152,
+ "ts": 1795679265,
  "by": "app",
  "win": 30,
  "maxTP": 1,
- "verdict": "RED",
- "score": 94
+ "verdict": "YELLOW",
+ "score": 41
 }
